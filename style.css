@@ -215,6 +215,23 @@ ul.ks-cboxtags {
   .qbox .mcbtn:hover {
     background-color: #787875
   }
+  .qbox .submit-btn {
+    align-self: center;
+    background-color: rgb(198, 201, 205);
+    border-radius: 0.75rem;
+    width: 6rem;
+    height: auto;
+    border: 0.25rem solid rgb(29,185,84);;
+    color: #000000;
+    padding: 0.12rem 0.18rem; 
+    font-size: 1rem;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    cursor: pointer; 
+  }
+
+  .qbox .submit-btn:hover {
+    background-color: #0bfa37
+  }
   .qbox.active {
     opacity: 1;
     top: 30%;
@@ -389,7 +406,7 @@ ul.ks-cboxtags {
   margin-bottom: 1rem;
 }
 
-.chooseGame.hot-streak-btn:hover {
+.chooseGame .hot-streak-btn:hover {
   transition: 1s ease-in-out;
   background: #4F95DA;
 }

@@ -435,6 +435,7 @@ const UIController = (function () {
 
         },
         hotStreakGenres(artist, score_board) {
+            submit = document.getElementById('submit');
             submit.style.display = "unset";
             document.getElementById("hot-streak-q").innerHTML = `What genre(s) does Spotify not label this artist with?`;
 
@@ -481,7 +482,6 @@ const UIController = (function () {
             document.getElementById('label3').innerHTML = `${mc[2]}`;
             document.getElementById('label4').innerHTML = `${mc[3]}`;
 
-            submit = document.getElementById('submit');
             submit.addEventListener('click', event => {
                 if (artist.genres.length == 1) {
                     if (document.getElementById("checkbox2").checked
@@ -787,7 +787,7 @@ const UIController = (function () {
             });
             return score_board;
 
-        },
+        },/*
         hotStreakTrackRelease(artistTopTen, score_board) {
             document.getElementById("hot-streak-q").innerHTML = `What is the release date of this song?`;
             var mc_spots = Math.floor(Math.random() * 4);
@@ -917,7 +917,7 @@ const UIController = (function () {
             document.getElementById("q4").innerHTML = `${mc[3]}`;
 
             return score_board;
-        },
+        },*/
         storeToken(value) {
             document.querySelector(DOMElements.hfToken).value = value;
         },
@@ -1073,8 +1073,8 @@ const APPController = (function (UICtrl, APICtrl) {
     }
 
     async function hotStreakQuestion() {
-        var sel_question = Math.floor(Math.random() * 6);
-        sel_question = 5;
+        var sel_question = Math.floor(Math.random() * 5);
+        // sel_question = 5;
         document.getElementsByClassName("qbox")[0].classList.add("active");
         submit = document.getElementById("submit");
         if (sel_question == 0 || sel_question == 1 || sel_question == 3 || sel_question == 5) {
