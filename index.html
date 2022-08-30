@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify Stats Quizzer API Tutorial</title>
+    <title>Spotify Stats Quiz App</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
 </head>
@@ -24,7 +24,6 @@
                 Choose an artist from the drop down you would like to be quizzed on
             </header>
         </div>
-
         <div class="dropdown">
             <form action="">
                 <input type="hidden" name="" id='hidden_token'>
@@ -33,24 +32,30 @@
             </form>
         </div>
 
-
-        <div class="offset-md-1 col-sm-4 artist-detail" id="artist-detail"></div>
-
+        <div class="artist-detail">
+            <div id="artist-detail"></div>
+        </div>
+        
         <div class="chooseGame">
             <header class="prompts" id="prompt">
                 <h3>[]</h3>
             </header>
-            <button type="button" class="hot-streak-btn" id="hsbtn">Hot Streak</button>
-            <h5>Fast paced. 12s to answer! Get as many qs correct in a row for the best streak!</h5>
-            <!-- <button type="button" class="hot-streak-btn" id="hlbtn">Higher or Lower</button>
-            <h5>Guess higher or lower on statistics!</h5> -->
+            <div class="gameModes">
+                <button type="button" class="hot-streak-btn" id="hsbtn">Hot Streak</button>
+                <h5>Fast paced. 33s to answer! Get as many qs correct in a row for the best streak!</h5>
+                <!-- <button type="button" class="hot-streak-btn" id="hlbtn">Higher or Lower</button>
+                <h5>Guess higher or lower on statistics!</h5> -->
+                <button type="button" class="hot-streak-btn" id="testbtn">Full Test</button>
+                <h5>How well do you know the artist? Quiz yourself on all artists statistical endpoints! No time limit</h5>
+            </div>
         </div>
         
-
-        <header class="prompts" id="hot-streak-q">
-            <h3>[]</h3>
-        </header>
-
+        <div class="question">
+            <header class="prompts" id="hot-streak-q">
+                <h3>[]</h3>
+            </header>
+        </div>
+        
         <div class="qbox">
             <div class="questions">
                 <header id="q1">
@@ -88,9 +93,7 @@
                 <button type="button" class="mcbtn" id="Dbtn">D</button>
                 
                 <button type="input" class="submit-btn" id="submit">Submit</button>
-            </div>
-
-            
+            </div>    
         </div>
 
         <div class="popup center">
@@ -101,7 +104,7 @@
             </div>
             <div class="popup-title">
                 <header id="popup-title">
-                    Correct!!
+                    []
                 </header>
 
             </div>
@@ -112,16 +115,19 @@
             </div>
             <div class="dismiss-btn">
                 <button id="dismiss-popup-btn">
-                    Next Question
+                    []
                 </button>
             </div>
         </div>
 
-
-        <header id="final-score">
-            <h3>[]</h3>
-        </header>
-
+        <div class="reset-page">
+            <header class="prompts" id="reset-prompt">
+                <h3>Click Reset to choose another artist and/or game mode or hit play again</h3>
+            </header>
+            <button type="button" class="hot-streak-btn" id="reset-btn">Reset</button>
+            <button type="button" class="hot-streak-btn" id="play-again-btn">Play Again</button>
+        </div>
+        
 
     </div>
 
