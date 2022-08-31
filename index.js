@@ -413,15 +413,15 @@ const UIController = (function () {
 
             return score_board, correctAnswer;
         },
-        topTracks(artist, mc_spots) {
+        topTracks(artist, artistTopTracks, mc_spots) {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
             document.getElementsByClassName("artist-detail")[0].classList.add("active");
 
             document.getElementById("hot-streak-q").innerHTML = `What are ${artist.name}'s hottest 3 tracks currently?`;
 
-            var top_tracks = [artist.tracks[0].name, artist.tracks[1].name, artist.tracks[2].name, artist.tracks[3].name,
-            artist.tracks[4].name, artist.tracks[5].name, artist.tracks[6].name, artist.tracks[7].name, artist.tracks[8].name,
-            artist.tracks[9].name];
+            var top_tracks = [artistTopTracks.tracks[0].name, artistTopTracks.tracks[1].name, artistTopTracks.tracks[2].name, 
+            artistTopTracks.tracks[3].name, artistTopTracks.tracks[4].name, artistTopTracks.tracks[5].name, artistTopTracks.tracks[6].name,
+            artistTopTracks.tracks[7].name, artistTopTracks.tracks[8].name, artistTopTracks.tracks[9].name];
 
             var random_nums = [];
             var n = 9;
@@ -910,7 +910,8 @@ const UIController = (function () {
 
             var artist_name = artist.name;
 
-            document.getElementById("hot-streak-q").innerHTML = `How many official albums does ${artist_name} have under their name? (not updated recently..)`;
+            document.getElementById("hot-streak-q").innerHTML = `How many official albums does ${artist_name} have under their name? 
+            (not updated recently..)`;
 
             const answers = [real_albums, fake_albums1, fake_albums2, fake_albums3];
 
@@ -1381,7 +1382,7 @@ const APPController = (function (UICtrl, APICtrl) {
             UICtrl.genres(artist, score_board, correctAnswer);
         }
         else if (sel_question == 3) {
-            UICtrl.topTracks(artistTopTracks, mc_spots)
+            UICtrl.topTracks(artist, artistTopTracks, mc_spots)
         }
         else if (sel_question == 4) {
             UICtrl.related(artist, relatedArtists, score_board, mc_spots, correctAnswer);
@@ -1555,7 +1556,7 @@ const APPController = (function (UICtrl, APICtrl) {
             UICtrl.genres(artist, score_board, correctAnswer);
         }
         else if (sel_question == 3) {
-            UICtrl.topTracks(artistTopTracks, mc_spots)
+            UICtrl.topTracks(artist, artistTopTracks, mc_spots)
         }
         else if (sel_question == 4) {
             UICtrl.related(artist, relatedArtists, score_board, mc_spots, correctAnswer);
