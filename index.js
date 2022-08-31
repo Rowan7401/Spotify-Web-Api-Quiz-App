@@ -481,8 +481,8 @@ const UIController = (function () {
             const related = [relatedArtists.artists[0].name, relatedArtists.artists[1].name, relatedArtists.artists[2].name, 
             relatedArtists.artists[3].name, relatedArtists.artists[4].name, relatedArtists.artists[5].name, relatedArtists.artists[6].name,
             relatedArtists.artists[7].name, relatedArtists.artists[8].name, relatedArtists.artists[9].name, relatedArtists.artists[10].name, 
-            relatedArtists.artists[11].name, relatedArtists.artists[12].name, artist.artists[13].name, relatedArtists.artists[14].name, 
-            relatedArtists.artists[15].name, relatedArtists.artists[16].name, relatedArtists.artists[17].name, artist.artists[18].name,
+            relatedArtists.artists[11].name, relatedArtists.artists[12].name, relatedArtists.artists[13].name, relatedArtists.artists[14].name, 
+            relatedArtists.artists[15].name, relatedArtists.artists[16].name, relatedArtists.artists[17].name, relatedArtists.artists[18].name,
             relatedArtists.artists[19].name];
 
             const random_artists = ["Drake", "Cardi B", "Lil Baby", "Michael Jackson", "NAV", "88GLAM", "Lil Yachty", "Joji", "Yeat",
