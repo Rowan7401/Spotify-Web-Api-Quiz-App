@@ -228,7 +228,6 @@ const UIController = (function () {
             var n = 3;
             do {
                 const randomNumber = Math.floor(Math.random() * 101);
-
                 if (!random_nums.includes(randomNumber) && randomNumber != real_ranking) {
                     random_nums.push(randomNumber);
                 }
@@ -239,7 +238,7 @@ const UIController = (function () {
             var fake_rank2 = random_nums[1];
             var fake_rank3 = random_nums[2];
 
-            const answers = [real_ranking, fake_rank1, fake_rank2, fake_rank3];
+            var answers = [real_ranking, fake_rank1, fake_rank2, fake_rank3];
 
             if (mc_spots == 0) {
                 var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
@@ -259,6 +258,8 @@ const UIController = (function () {
             q2.innerHTML = `${mc[1]}`;
             q3.innerHTML = `${mc[2]}`;
             q4.innerHTML = `${mc[3]}`;
+
+            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
 
         },
         followers(artist, mc_spots) {
@@ -287,7 +288,8 @@ const UIController = (function () {
             fake_followers1 = fake_followers1.toLocaleString('en-US')
             fake_followers2 = fake_followers2.toLocaleString('en-US')
             fake_followers3 = fake_followers3.toLocaleString('en-US')
-            const answers = [real_followers, fake_followers1, fake_followers2, fake_followers3];
+
+            var answers = [real_followers, fake_followers1, fake_followers2, fake_followers3];
 
             if (mc_spots == 0) {
                 var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
@@ -307,6 +309,8 @@ const UIController = (function () {
             q2.innerHTML = `${mc[1]}`;
             q3.innerHTML = `${mc[2]}`;
             q4.innerHTML = `${mc[3]}`;
+
+            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
 
         },
         genres(artist, score_board, correctAnswer) {
@@ -443,8 +447,7 @@ const UIController = (function () {
                 + ", " + top_tracks[8];
 
 
-
-            const answers = [top_three, fake_three1, fake_three2, fake_three3];
+            var answers = [top_three, fake_three1, fake_three2, fake_three3];
 
             if (mc_spots == 0) {
                 var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
@@ -464,6 +467,8 @@ const UIController = (function () {
             q2.innerHTML = `${mc[1]}`;
             q3.innerHTML = `${mc[2]}`;
             q4.innerHTML = `${mc[3]}`;
+
+            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
 
         },
         related(artist, relatedArtists, score_board, mc_spots, correctAnswer) {
@@ -655,7 +660,7 @@ const UIController = (function () {
 
             document.getElementById("hot-streak-q").innerHTML = `What is the release date of "${song_name}"?`;
 
-            const answers = [real_track, fake_track1, fake_track2, fake_track3];
+            var answers = [real_track, fake_track1, fake_track2, fake_track3];
 
             if (mc_spots == 0) {
                 var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
@@ -676,6 +681,7 @@ const UIController = (function () {
             q3.innerHTML = `${mc[2]}`;
             q4.innerHTML = `${mc[3]}`;
 
+            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
         },
         trackLength(artistTopTen, mc_spots) {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
@@ -729,7 +735,7 @@ const UIController = (function () {
             document.getElementById("hot-streak-q").innerHTML = `How long is "${song_name}"?`;
 
 
-            const answers = [real_track, fake_track1, fake_track2, fake_track3];
+            var answers = [real_track, fake_track1, fake_track2, fake_track3];
 
             if (mc_spots == 0) {
                 var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
@@ -749,6 +755,8 @@ const UIController = (function () {
             q2.innerHTML = `${mc[1]}`;
             q3.innerHTML = `${mc[2]}`;
             q4.innerHTML = `${mc[3]}`;
+
+            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
 
         },
         trackAnalysis(artistTopTen, artistTopTenAnalysis, mc_spots) {
@@ -807,7 +815,7 @@ const UIController = (function () {
                 fake_track3 = top_tracks_analysis[random_nums[3]].tempo;
             }
 
-            const answers = [real_track, fake_track1, fake_track2, fake_track3];
+            var answers = [real_track, fake_track1, fake_track2, fake_track3];
 
             if (mc_spots == 0) {
                 var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
@@ -827,6 +835,8 @@ const UIController = (function () {
             q2.innerHTML = `${mc[1]}`;
             q3.innerHTML = `${mc[2]}`;
             q4.innerHTML = `${mc[3]}`;
+
+            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
 
         },
         trackPopularity(artistTopTen, mc_spots) {
@@ -849,18 +859,30 @@ const UIController = (function () {
 
             } while (random_nums.length < n);
 
+            var tracks_pop = [];
+            var x = 4;
+            var i = 0;
+            do {
+                const artistPop = top_tracks[random_nums[i]].popularity;
 
-            real_track = top_tracks[random_nums[0]].popularity;
-            fake_track1 = top_tracks[random_nums[1]].popularity;
-            fake_track2 = top_tracks[random_nums[2]].popularity;
-            fake_track3 = top_tracks[random_nums[3]].popularity;
+                if (!tracks_pop.includes(artistPop)) {
+                    tracks_pop.push(artistPop);
+                    i++;
+                }
 
+            } while (tracks_pop.length < x);
+
+
+            real_track = tracks_pop[0];
+            fake_track1 = tracks_pop[1];
+            fake_track2 = tracks_pop[2];
+            fake_track3 = tracks_pop[3];
 
             var song_name = top_tracks[random_nums[0]].name;
 
             document.getElementById("hot-streak-q").innerHTML = `What is the popularity of "${song_name}"? (100 = most popular)`;
 
-            const answers = [real_track, fake_track1, fake_track2, fake_track3];
+            var answers = [real_track, fake_track1, fake_track2, fake_track3];
 
             if (mc_spots == 0) {
                 var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
@@ -880,6 +902,9 @@ const UIController = (function () {
             q2.innerHTML = `${mc[1]}`;
             q3.innerHTML = `${mc[2]}`;
             q4.innerHTML = `${mc[3]}`;
+
+            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
+
 
         },
         albumCount(albums, artist, artistAlbums, mc_spots) {
@@ -913,7 +938,7 @@ const UIController = (function () {
             document.getElementById("hot-streak-q").innerHTML = `How many official albums does ${artist_name} have under their name? 
             (not updated recently..)`;
 
-            const answers = [real_albums, fake_albums1, fake_albums2, fake_albums3];
+            var answers = [real_albums, fake_albums1, fake_albums2, fake_albums3];
 
             if (mc_spots == 0) {
                 var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
@@ -933,6 +958,8 @@ const UIController = (function () {
             q2.innerHTML = `${mc[1]}`;
             q3.innerHTML = `${mc[2]}`;
             q4.innerHTML = `${mc[3]}`;
+
+            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
 
         },
         albumTrackCount(albums, mc_spots, randomAlbumIndex) {
@@ -972,7 +999,7 @@ const UIController = (function () {
 
             }
 
-            const answers = [real_track_count, fake_track_count1, fake_track_count2, fake_track_count3];
+            var answers = [real_track_count, fake_track_count1, fake_track_count2, fake_track_count3];
 
             if (mc_spots == 0) {
                 var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
@@ -992,6 +1019,8 @@ const UIController = (function () {
             q2.innerHTML = `${mc[1]}`;
             q3.innerHTML = `${mc[2]}`;
             q4.innerHTML = `${mc[3]}`;
+
+            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
 
         },
         albumRelease(albums, mc_spots, randomAlbumIndex) {
@@ -1040,7 +1069,7 @@ const UIController = (function () {
 
             }
 
-            const answers = [real_album_rel, fake_album_rel1, fake_album_rel2, fake_album_rel3];
+            answers = [real_album_rel, fake_album_rel1, fake_album_rel2, fake_album_rel3];
 
             if (mc_spots == 0) {
                 var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
@@ -1060,6 +1089,8 @@ const UIController = (function () {
             q2.innerHTML = `${mc[1]}`;
             q3.innerHTML = `${mc[2]}`;
             q4.innerHTML = `${mc[3]}`;
+    
+            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
 
         },
         storeToken(value) {
@@ -1081,7 +1112,6 @@ const APPController = (function (UICtrl, APICtrl) {
 
     var score_board = [0, 0];
     var artistSelected = false;
-    var gameModeSelected = false;
     var correctAnswer = false;
     var extraQuestions = true;
 
@@ -1166,130 +1196,6 @@ const APPController = (function (UICtrl, APICtrl) {
         console.log(score_board)
         fullTest();
     }
-
-    function hotStreakPopup(score_board) {
-        document.getElementsByClassName("popup")[0].classList.add("active");
-
-        document.getElementById("score").innerHTML = `Hot Streak of ${score_board[0]}!`;
-
-        dismiss_btn = document.getElementById("dismiss-popup-btn");
-        dismiss_btn.addEventListener("click", dismissPopup);
-
-        if (score_board[1] != 0) {
-            document.getElementById("score").innerHTML = `Final Score: Hot Streak of ${score_board[0]}!`;
-            document.getElementById("dismiss-popup-btn").innerHTML = `Dismiss`;
-            if (score_board[0] < 5) {
-                document.getElementById("popup-title").innerHTML = `🧊Game Over!🧊 Cold round...`;
-            }
-            else {
-                document.getElementById("popup-title").innerHTML = `🔥Game Over!🔥 You were on fire!`;
-            }
-
-        }
-        else {
-            document.getElementById("dismiss-popup-btn").innerHTML = `Next Question`;
-            document.getElementById("popup-title").innerHTML = `Correct!!`;
-        }
-
-        function dismissPopup() {
-            if (score_board[1] == 0) {
-                dismiss_btn.removeEventListener("click", dismissPopup);
-                document.getElementsByClassName("popup")[0].classList.remove("active");
-                UICtrl.removeAlbumImage();
-                hotStreakQuestion();
-            }
-            else {
-                document.getElementsByClassName("popup")[0].classList.remove("active");
-                document.getElementsByClassName("question")[0].classList.remove("active");
-                document.getElementsByClassName("reset-page")[0].classList.add("active");
-                dismiss_btn.removeEventListener("click", dismissPopup);
-            }
-
-        }
-        console.log(score_board);
-
-    }
-    function fullTestPopup(score_board) {
-        document.getElementsByClassName("popup")[0].classList.add("active");
-
-        var totalQ = score_board[0] + score_board[1];
-        document.getElementById("score").innerHTML = `${score_board[0]}/${totalQ}`;
-
-        dismiss_btn = document.getElementById("dismiss-popup-btn");
-        dismiss_btn.addEventListener("click", dismissPopup);
-
-        if (correctAnswer) {
-            document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-        }
-        else {
-            document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
-        }
-
-        var percentageRaw = score_board[0] / totalQ;
-        var percentage = (percentageRaw.toFixed(4)) * 100;
-        if (!extraQuestions) {
-            if (percentageRaw >= 0.93) {
-                document.getElementById("popup-title").innerHTML = `Grade: [A] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.90 && percentageRaw < 0.93) {
-                document.getElementById("popup-title").innerHTML = `Grade: [A-] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.87 && percentageRaw < 0.9) {
-                document.getElementById("popup-title").innerHTML = `Grade: [B+] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.84 && percentageRaw < 0.87) {
-                document.getElementById("popup-title").innerHTML = `Grade: [B] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.8 && percentageRaw < 0.84) {
-                document.getElementById("popup-title").innerHTML = `Grade: [B-] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.77 && percentageRaw < 0.8) {
-                document.getElementById("popup-title").innerHTML = `Grade: [C+] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.74 && percentageRaw < 0.77) {
-                document.getElementById("popup-title").innerHTML = `Grade: [C] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.7 && percentageRaw < 0.74) {
-                document.getElementById("popup-title").innerHTML = `Grade: [C-] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.67 && percentageRaw < 0.7) {
-                document.getElementById("popup-title").innerHTML = `Grade: [D+] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.64 && percentageRaw < 0.67) {
-                document.getElementById("popup-title").innerHTML = `Grade: [D] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.6 && percentageRaw < 0.64) {
-                document.getElementById("popup-title").innerHTML = `Grade: [D-] Final score: ${percentage}%`;
-            }
-            else {
-                document.getElementById("popup-title").innerHTML = `Grade: [F] Final score: ${percentage}%`;
-            }
-            document.getElementById("dismiss-popup-btn").innerHTML = `Dismiss`;
-
-        }
-        else {
-            document.getElementById("dismiss-popup-btn").innerHTML = `Next Question`;
-        }
-
-        function dismissPopup() {
-            if (extraQuestions) {
-                dismiss_btn.removeEventListener("click", dismissPopup);
-                document.getElementsByClassName("popup")[0].classList.remove("active");
-                UICtrl.removeAlbumImage();
-                fullTest();
-            }
-            else {
-                document.getElementsByClassName("popup")[0].classList.remove("active");
-                document.getElementsByClassName("question")[0].classList.remove("active");
-                document.getElementsByClassName("reset-page")[0].classList.add("active");
-                dismiss_btn.removeEventListener("click", dismissPopup);
-            }
-
-        }
-        console.log(score_board);
-
-    }
-
 
     var artist;
     var artistTopTracks;
@@ -1718,12 +1624,135 @@ const APPController = (function (UICtrl, APICtrl) {
 
     }
 
+    async function hotStreakPopup() {
+        document.getElementsByClassName("popup")[0].classList.add("active");
+
+        document.getElementById("score").innerHTML += `Hot Streak of ${score_board[0]}!`;
+
+        dismiss_btn = document.getElementById("dismiss-popup-btn");
+        dismiss_btn.addEventListener("click", dismissPopup);
+
+        if (score_board[1] != 0) {
+            document.getElementById("score").innerHTML += `Final Score: Hot Streak of ${score_board[0]}!`;
+            document.getElementById("dismiss-popup-btn").innerHTML = `Dismiss`;
+            if (score_board[0] < 5) {
+                document.getElementById("popup-title").innerHTML = `🧊Game Over!🧊 Cold round...`;
+            }
+            else {
+                document.getElementById("popup-title").innerHTML = `🔥Game Over!🔥 You were on fire!`;
+            }
+
+        }
+        else {
+            document.getElementById("dismiss-popup-btn").innerHTML = `Next Question`;
+            document.getElementById("popup-title").innerHTML = `Correct!!`;
+        }
+
+        function dismissPopup() {
+            if (score_board[1] == 0) {
+                dismiss_btn.removeEventListener("click", dismissPopup);
+                document.getElementsByClassName("popup")[0].classList.remove("active");
+                UICtrl.removeAlbumImage();
+                hotStreakQuestion();
+            }
+            else {
+                document.getElementsByClassName("popup")[0].classList.remove("active");
+                document.getElementsByClassName("question")[0].classList.remove("active");
+                document.getElementsByClassName("reset-page")[0].classList.add("active");
+                dismiss_btn.removeEventListener("click", dismissPopup);
+            }
+
+        }
+        console.log(score_board);
+
+    }
+
+    async function fullTestPopup() {
+        document.getElementsByClassName("popup")[0].classList.add("active");
+
+        var totalQ = score_board[0] + score_board[1];
+
+        document.getElementById("score").innerHTML += ` Score: ${score_board[0]}/${totalQ}`;
+
+        dismiss_btn = document.getElementById("dismiss-popup-btn");
+        dismiss_btn.addEventListener("click", dismissPopup);
+
+        if (correctAnswer) {
+            document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
+        }
+        else {
+            document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
+        }
+
+        var percentageRaw = score_board[0] / totalQ;
+        var percentage = (percentageRaw.toFixed(4)) * 100;
+        if (!extraQuestions) {
+            if (percentageRaw >= 0.93) {
+                document.getElementById("popup-title").innerHTML = `Grade: [A] Final score: ${percentage}%`;
+            }
+            else if (percentageRaw >= 0.90 && percentageRaw < 0.93) {
+                document.getElementById("popup-title").innerHTML = `Grade: [A-] Final score: ${percentage}%`;
+            }
+            else if (percentageRaw >= 0.87 && percentageRaw < 0.9) {
+                document.getElementById("popup-title").innerHTML = `Grade: [B+] Final score: ${percentage}%`;
+            }
+            else if (percentageRaw >= 0.84 && percentageRaw < 0.87) {
+                document.getElementById("popup-title").innerHTML = `Grade: [B] Final score: ${percentage}%`;
+            }
+            else if (percentageRaw >= 0.8 && percentageRaw < 0.84) {
+                document.getElementById("popup-title").innerHTML = `Grade: [B-] Final score: ${percentage}%`;
+            }
+            else if (percentageRaw >= 0.77 && percentageRaw < 0.8) {
+                document.getElementById("popup-title").innerHTML = `Grade: [C+] Final score: ${percentage}%`;
+            }
+            else if (percentageRaw >= 0.74 && percentageRaw < 0.77) {
+                document.getElementById("popup-title").innerHTML = `Grade: [C] Final score: ${percentage}%`;
+            }
+            else if (percentageRaw >= 0.7 && percentageRaw < 0.74) {
+                document.getElementById("popup-title").innerHTML = `Grade: [C-] Final score: ${percentage}%`;
+            }
+            else if (percentageRaw >= 0.67 && percentageRaw < 0.7) {
+                document.getElementById("popup-title").innerHTML = `Grade: [D+] Final score: ${percentage}%`;
+            }
+            else if (percentageRaw >= 0.64 && percentageRaw < 0.67) {
+                document.getElementById("popup-title").innerHTML = `Grade: [D] Final score: ${percentage}%`;
+            }
+            else if (percentageRaw >= 0.6 && percentageRaw < 0.64) {
+                document.getElementById("popup-title").innerHTML = `Grade: [D-] Final score: ${percentage}%`;
+            }
+            else {
+                document.getElementById("popup-title").innerHTML = `Grade: [F] Final score: ${percentage}%`;
+            }
+            document.getElementById("dismiss-popup-btn").innerHTML = `Dismiss`;
+
+        }
+        else {
+            document.getElementById("dismiss-popup-btn").innerHTML = `Next Question`;
+        }
+
+        function dismissPopup() {
+            if (extraQuestions) {
+                dismiss_btn.removeEventListener("click", dismissPopup);
+                document.getElementsByClassName("popup")[0].classList.remove("active");
+                UICtrl.removeAlbumImage();
+                fullTest();
+            }
+            else {
+                document.getElementsByClassName("popup")[0].classList.remove("active");
+                document.getElementsByClassName("question")[0].classList.remove("active");
+                document.getElementsByClassName("reset-page")[0].classList.add("active");
+                dismiss_btn.removeEventListener("click", dismissPopup);
+            }
+
+        }
+        console.log(score_board);
+
+    }
+
     play_again_btn = document.getElementById("play-again-btn");
     hsbtn = document.getElementById('hsbtn');
     hsbtn.addEventListener('click', event => {
-        if (artistSelected && gameModeSelected == false) {
-            gameModeSelected = true;
-
+        if (artistSelected) {
             document.getElementsByClassName("chooseGame")[0].classList.remove("active");
             document.getElementsByClassName("question")[0].classList.add("active");
 
@@ -1738,9 +1767,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
     testbtn = document.getElementById('testbtn');
     testbtn.addEventListener('click', event => {
-        if (artistSelected && gameModeSelected == false) {
-            gameModeSelected = true;
-
+        if (artistSelected) {
             document.getElementsByClassName("chooseGame")[0].classList.remove("active");
             document.getElementsByClassName("question")[0].classList.add("active");
 
