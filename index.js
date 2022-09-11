@@ -313,7 +313,7 @@ const UIController = (function () {
             document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
 
         },
-        genres(artist, score_board, correctAnswer) {
+        genres(artist, score_board) {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
             document.getElementsByClassName("artist-detail")[0].classList.add("active");
 
@@ -370,14 +370,15 @@ const UIController = (function () {
                         && document.getElementById("checkbox4").checked
                         && document.getElementById("checkbox1").checked == false) {
                         score_board[0]++;
-                        correctAnswer = true;
+                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
 
                     }
                     else {
                         score_board[1]++;
-                        correctAnswer = false;
+                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
 
                     }
+                    document.getElementById("score").innerHTML += `Answer: ${mc[1]}, ${mc[2]}, ${mc[3]}`;
                 }
                 else if (artist.genres.length == 2) {
                     if (document.getElementById("checkbox3").checked
@@ -385,27 +386,29 @@ const UIController = (function () {
                         && document.getElementById("checkbox1").checked == false
                         && document.getElementById("checkbox2").checked == false) {
                         score_board[0]++;
-                        correctAnswer = true;
+                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
 
                     }
                     else {
                         score_board[1]++;
-                        correctAnswer = false;
+                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
 
                     }
+                    document.getElementById("score").innerHTML += `Answer: ${mc[2]}, ${mc[3]}`;
                 }
                 else {
                     if (document.getElementById("checkbox4").checked && document.getElementById("checkbox1").checked == false
                         && document.getElementById("checkbox2").checked == false && document.getElementById("checkbox3").checked == false) {
                         score_board[0]++;
-                        correctAnswer = true;
+                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
 
                     }
                     else {
                         score_board[1]++;
-                        correctAnswer = false;
+                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
 
                     }
+                    document.getElementById("score").innerHTML += `Answer: ${mc[3]}`;
                 }
                 submit.removeEventListener("click", submitAnswer);
                 document.getElementById("checkbox1").parentNode.style.display = 'none';
@@ -415,7 +418,7 @@ const UIController = (function () {
                 document.getElementsByClassName("qbox")[0].classList.remove("active");
             }
 
-            return score_board, correctAnswer;
+            return score_board;
         },
         topTracks(artist, artistTopTracks, mc_spots) {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
@@ -471,7 +474,7 @@ const UIController = (function () {
             document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
 
         },
-        related(artist, relatedArtists, score_board, mc_spots, correctAnswer) {
+        related(artist, relatedArtists, score_board, mc_spots) {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
             document.getElementsByClassName("artist-detail")[0].classList.add("active");
 
@@ -552,53 +555,57 @@ const UIController = (function () {
                     if (document.getElementById("checkbox1").checked == false && document.getElementById("checkbox3").checked
                         && document.getElementById("checkbox2").checked == false && document.getElementById("checkbox4").checked == false) {
                         score_board[0]++;
-                        correctAnswer = true;
+                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
 
                     }
                     else {
                         score_board[1]++;
-                        correctAnswer = false;
+                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
 
                     }
+                    document.getElementById("score").innerHTML += `Answer: ${mc[2]}`;
                 }
                 else if (mc_spots == 1) {
                     if (document.getElementById("checkbox1").checked && document.getElementById("checkbox2").checked == false
                         && document.getElementById("checkbox3").checked && document.getElementById("checkbox4").checked == false) {
                         score_board[0]++;
-                        correctAnswer = true;
+                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
 
                     }
                     else {
                         score_board[1]++;
-                        correctAnswer = false;
+                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
 
                     }
+                    document.getElementById("score").innerHTML += `Answer: ${mc[0]}, ${mc[2]}`;
                 }
                 else if (mc_spots == 2) {
                     if (document.getElementById("checkbox1").checked && document.getElementById("checkbox2").checked == false
                         && document.getElementById("checkbox3").checked && document.getElementById("checkbox4").checked) {
                         score_board[0]++;
-                        correctAnswer = true;
+                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
 
                     }
                     else {
                         score_board[1]++;
-                        correctAnswer = false;
+                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
 
                     }
+                    document.getElementById("score").innerHTML += `Answer: ${mc[0]}, ${mc[2]}, ${mc[3]}`;
                 }
                 else {
                     if (document.getElementById("checkbox1").checked && document.getElementById("checkbox2").checked
                         && document.getElementById("checkbox3").checked && document.getElementById("checkbox4").checked) {
                         score_board[0]++;
-                        correctAnswer = true;
+                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
 
                     }
                     else {
                         score_board[1]++;
-                        correctAnswer = false;
+                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
 
                     }
+                    document.getElementById("score").innerHTML += `Answer: ${mc[1]}, ${mc[2]}, ${mc[3]}, ${mc[0]}`;
                 }
                 submit.removeEventListener("click", submitAnswer);
                 document.getElementById("checkbox1").parentNode.style.display = 'none';
@@ -607,7 +614,8 @@ const UIController = (function () {
                 document.getElementById("checkbox4").parentNode.style.display = 'none';
                 document.getElementsByClassName("qbox")[0].classList.remove("active");
             }
-            return score_board, correctAnswer;
+
+            return score_board;
 
         },
         trackRelease(artistTopTen, mc_spots) {
@@ -1112,7 +1120,6 @@ const APPController = (function (UICtrl, APICtrl) {
 
     var score_board = [0, 0];
     var artistSelected = false;
-    var correctAnswer = false;
     var extraQuestions = true;
 
     var i = 0;
@@ -1285,13 +1292,13 @@ const APPController = (function (UICtrl, APICtrl) {
             UICtrl.followers(artist, mc_spots);
         }
         else if (sel_question == 2) {
-            UICtrl.genres(artist, score_board, correctAnswer);
+            UICtrl.genres(artist, score_board);
         }
         else if (sel_question == 3) {
             UICtrl.topTracks(artist, artistTopTracks, mc_spots)
         }
         else if (sel_question == 4) {
-            UICtrl.related(artist, relatedArtists, score_board, mc_spots, correctAnswer);
+            UICtrl.related(artist, relatedArtists, score_board, mc_spots);
         }
         else if (sel_question == 5) {
             UICtrl.trackRelease(artistTopTen, mc_spots);
@@ -1446,6 +1453,7 @@ const APPController = (function (UICtrl, APICtrl) {
     async function fullTestQuestion(sel_question) {
         document.getElementsByClassName("qbox")[0].classList.add("active");
         var mc_spots = Math.floor(Math.random() * 4);
+        var correctAnswer = false;
 
         if (albums.length != 0) {
             randomAlbumIndex = Math.floor(Math.random() * albums.length);
@@ -1459,13 +1467,13 @@ const APPController = (function (UICtrl, APICtrl) {
             UICtrl.followers(artist, mc_spots);
         }
         else if (sel_question == 2) {
-            UICtrl.genres(artist, score_board, correctAnswer);
+            UICtrl.genres(artist, score_board);
         }
         else if (sel_question == 3) {
             UICtrl.topTracks(artist, artistTopTracks, mc_spots)
         }
         else if (sel_question == 4) {
-            UICtrl.related(artist, relatedArtists, score_board, mc_spots, correctAnswer);
+            UICtrl.related(artist, relatedArtists, score_board, mc_spots);
         }
         else if (sel_question == 5) {
             UICtrl.trackRelease(artistTopTen, mc_spots);
@@ -1608,7 +1616,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
             document.getElementsByClassName("qbox")[0].classList.remove("active");
         }
-
+        
         for (let i = 0; i < 50; i++) {
             var qbox_active = document.getElementsByClassName('qbox active').length > 0;
             if (qbox_active) {
@@ -1616,11 +1624,21 @@ const APPController = (function (UICtrl, APICtrl) {
                 await sleep(i * 500);
             }
             else {
+                if (correctAnswer) {
+                    document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
+                    document.getElementById("fire").innerHTML = `✔️`
+                }
+                else {
+                    document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
+                    document.getElementById("fire").innerHTML = `❌`
+                }
                 fullTestPopup(score_board);
                 break;
             }
 
         }
+
+        
 
     }
 
@@ -1650,6 +1668,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
         function dismissPopup() {
             if (score_board[1] == 0) {
+                document.getElementById("score").innerHTML = ``;
                 dismiss_btn.removeEventListener("click", dismissPopup);
                 document.getElementsByClassName("popup")[0].classList.remove("active");
                 UICtrl.removeAlbumImage();
@@ -1677,15 +1696,10 @@ const APPController = (function (UICtrl, APICtrl) {
         dismiss_btn = document.getElementById("dismiss-popup-btn");
         dismiss_btn.addEventListener("click", dismissPopup);
 
-        if (correctAnswer) {
-            document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-        }
-        else {
-            document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
-        }
-
         var percentageRaw = score_board[0] / totalQ;
         var percentage = (percentageRaw.toFixed(4)) * 100;
+
+        console.log(extraQuestions);
         if (!extraQuestions) {
             if (percentageRaw >= 0.93) {
                 document.getElementById("popup-title").innerHTML = `Grade: [A] Final score: ${percentage}%`;
@@ -1732,6 +1746,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
         function dismissPopup() {
             if (extraQuestions) {
+                document.getElementById("score").innerHTML = ``;
                 dismiss_btn.removeEventListener("click", dismissPopup);
                 document.getElementsByClassName("popup")[0].classList.remove("active");
                 UICtrl.removeAlbumImage();
