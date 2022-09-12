@@ -371,11 +371,13 @@ const UIController = (function () {
                         && document.getElementById("checkbox1").checked == false) {
                         score_board[0]++;
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
+                        document.getElementById("fire").innerHTML = `✔️`
 
                     }
                     else {
                         score_board[1]++;
                         document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").innerHTML = `❌`
 
                     }
                     document.getElementById("score").innerHTML += `Answer: ${mc[1]}, ${mc[2]}, ${mc[3]}`;
@@ -387,11 +389,13 @@ const UIController = (function () {
                         && document.getElementById("checkbox2").checked == false) {
                         score_board[0]++;
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
+                        document.getElementById("fire").innerHTML = `✔️`
 
                     }
                     else {
                         score_board[1]++;
                         document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").innerHTML = `❌`
 
                     }
                     document.getElementById("score").innerHTML += `Answer: ${mc[2]}, ${mc[3]}`;
@@ -401,11 +405,13 @@ const UIController = (function () {
                         && document.getElementById("checkbox2").checked == false && document.getElementById("checkbox3").checked == false) {
                         score_board[0]++;
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
+                        document.getElementById("fire").innerHTML = `✔️`
 
                     }
                     else {
                         score_board[1]++;
                         document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").innerHTML = `❌`
 
                     }
                     document.getElementById("score").innerHTML += `Answer: ${mc[3]}`;
@@ -426,7 +432,7 @@ const UIController = (function () {
 
             document.getElementById("hot-streak-q").innerHTML = `What are ${artist.name}'s hottest 3 tracks currently?`;
 
-            var top_tracks = [artistTopTracks.tracks[0].name, artistTopTracks.tracks[1].name, artistTopTracks.tracks[2].name, 
+            var top_tracks = [artistTopTracks.tracks[0].name, artistTopTracks.tracks[1].name, artistTopTracks.tracks[2].name,
             artistTopTracks.tracks[3].name, artistTopTracks.tracks[4].name, artistTopTracks.tracks[5].name, artistTopTracks.tracks[6].name,
             artistTopTracks.tracks[7].name, artistTopTracks.tracks[8].name, artistTopTracks.tracks[9].name];
 
@@ -486,10 +492,10 @@ const UIController = (function () {
             document.getElementById("checkbox3").parentNode.style.display = 'unset';
             document.getElementById("checkbox4").parentNode.style.display = 'unset';
 
-            const related = [relatedArtists.artists[0].name, relatedArtists.artists[1].name, relatedArtists.artists[2].name, 
+            const related = [relatedArtists.artists[0].name, relatedArtists.artists[1].name, relatedArtists.artists[2].name,
             relatedArtists.artists[3].name, relatedArtists.artists[4].name, relatedArtists.artists[5].name, relatedArtists.artists[6].name,
-            relatedArtists.artists[7].name, relatedArtists.artists[8].name, relatedArtists.artists[9].name, relatedArtists.artists[10].name, 
-            relatedArtists.artists[11].name, relatedArtists.artists[12].name, relatedArtists.artists[13].name, relatedArtists.artists[14].name, 
+            relatedArtists.artists[7].name, relatedArtists.artists[8].name, relatedArtists.artists[9].name, relatedArtists.artists[10].name,
+            relatedArtists.artists[11].name, relatedArtists.artists[12].name, relatedArtists.artists[13].name, relatedArtists.artists[14].name,
             relatedArtists.artists[15].name, relatedArtists.artists[16].name, relatedArtists.artists[17].name, relatedArtists.artists[18].name,
             relatedArtists.artists[19].name];
 
@@ -501,8 +507,8 @@ const UIController = (function () {
             var difference = random_artists.filter(x => related.indexOf(x) === -1);
 
             var nameIndex = difference.indexOf(artist.name);
-            if (nameIndex > -1) { 
-                difference.splice(nameIndex, 1); 
+            if (nameIndex > -1) {
+                difference.splice(nameIndex, 1);
             }
 
             var random_nums = [];
@@ -556,11 +562,13 @@ const UIController = (function () {
                         && document.getElementById("checkbox2").checked == false && document.getElementById("checkbox4").checked == false) {
                         score_board[0]++;
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
+                        document.getElementById("fire").innerHTML = `✔️`
 
                     }
                     else {
                         score_board[1]++;
                         document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").innerHTML = `❌`
 
                     }
                     document.getElementById("score").innerHTML += `Answer: ${mc[2]}`;
@@ -570,11 +578,13 @@ const UIController = (function () {
                         && document.getElementById("checkbox3").checked && document.getElementById("checkbox4").checked == false) {
                         score_board[0]++;
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
+                        document.getElementById("fire").innerHTML = `✔️`
 
                     }
                     else {
                         score_board[1]++;
                         document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").innerHTML = `❌`
 
                     }
                     document.getElementById("score").innerHTML += `Answer: ${mc[0]}, ${mc[2]}`;
@@ -584,11 +594,13 @@ const UIController = (function () {
                         && document.getElementById("checkbox3").checked && document.getElementById("checkbox4").checked) {
                         score_board[0]++;
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
+                        document.getElementById("fire").innerHTML = `✔️`
 
                     }
                     else {
                         score_board[1]++;
                         document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").innerHTML = `❌`
 
                     }
                     document.getElementById("score").innerHTML += `Answer: ${mc[0]}, ${mc[2]}, ${mc[3]}`;
@@ -598,11 +610,13 @@ const UIController = (function () {
                         && document.getElementById("checkbox3").checked && document.getElementById("checkbox4").checked) {
                         score_board[0]++;
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
+                        document.getElementById("fire").innerHTML = `✔️`
 
                     }
                     else {
                         score_board[1]++;
                         document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").innerHTML = `❌`
 
                     }
                     document.getElementById("score").innerHTML += `Answer: ${mc[1]}, ${mc[2]}, ${mc[3]}, ${mc[0]}`;
@@ -1097,7 +1111,7 @@ const UIController = (function () {
             q2.innerHTML = `${mc[1]}`;
             q3.innerHTML = `${mc[2]}`;
             q4.innerHTML = `${mc[3]}`;
-    
+
             document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
 
         },
@@ -1518,7 +1532,7 @@ const APPController = (function (UICtrl, APICtrl) {
             UICtrl.albumRelease(albums, mc_spots, randomAlbumIndex);
         }
 
-
+        var checkboxQ;
         submit = document.getElementById("submit");
         if (sel_question == 2 || sel_question == 4) {
             q1.style.display = "none";
@@ -1527,6 +1541,7 @@ const APPController = (function (UICtrl, APICtrl) {
             q4.style.display = "none";
 
             submit.style.display = "unset";
+            checkboxQ = true;
 
             ABtn.style.display = 'none';
             BBtn.style.display = 'none';
@@ -1550,6 +1565,7 @@ const APPController = (function (UICtrl, APICtrl) {
             DBtn.addEventListener("click", DClick);
 
             submit.style.display = "none";
+            checkboxQ = false;
         }
 
         function AClick(event) {
@@ -1616,7 +1632,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
             document.getElementsByClassName("qbox")[0].classList.remove("active");
         }
-        
+
         for (let i = 0; i < 50; i++) {
             var qbox_active = document.getElementsByClassName('qbox active').length > 0;
             if (qbox_active) {
@@ -1624,28 +1640,30 @@ const APPController = (function (UICtrl, APICtrl) {
                 await sleep(i * 500);
             }
             else {
-                if (correctAnswer) {
-                    document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                    document.getElementById("fire").innerHTML = `✔️`
-                }
-                else {
-                    document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
-                    document.getElementById("fire").innerHTML = `❌`
-                }
-                fullTestPopup(score_board);
                 break;
             }
 
         }
+        if (!checkboxQ) {
+            if (correctAnswer) {
+                document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
+                document.getElementById("fire").innerHTML = `✔️`
+            }
+            else {
+                document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
+                document.getElementById("fire").innerHTML = `❌`
+            }
 
-        
+        }  
+        fullTestPopup(score_board);
+
 
     }
 
     async function hotStreakPopup() {
         document.getElementsByClassName("popup")[0].classList.add("active");
 
-        document.getElementById("score").innerHTML += `Hot Streak of ${score_board[0]}!`;
+        document.getElementById("score").innerHTML += ` Hot Streak of ${score_board[0]}!`;
 
         dismiss_btn = document.getElementById("dismiss-popup-btn");
         dismiss_btn.addEventListener("click", dismissPopup);
@@ -1702,40 +1720,40 @@ const APPController = (function (UICtrl, APICtrl) {
         console.log(extraQuestions);
         if (!extraQuestions) {
             if (percentageRaw >= 0.93) {
-                document.getElementById("popup-title").innerHTML = `Grade: [A] Final score: ${percentage}%`;
+                document.getElementById("popup-title").innerHTML = ` Grade: [A] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.90 && percentageRaw < 0.93) {
-                document.getElementById("popup-title").innerHTML = `Grade: [A-] Final score: ${percentage}%`;
+                document.getElementById("popup-title").innerHTML = ` Grade: [A-] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.87 && percentageRaw < 0.9) {
-                document.getElementById("popup-title").innerHTML = `Grade: [B+] Final score: ${percentage}%`;
+                document.getElementById("popup-title").innerHTML = ` Grade: [B+] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.84 && percentageRaw < 0.87) {
-                document.getElementById("popup-title").innerHTML = `Grade: [B] Final score: ${percentage}%`;
+                document.getElementById("popup-title").innerHTML = ` Grade: [B] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.8 && percentageRaw < 0.84) {
-                document.getElementById("popup-title").innerHTML = `Grade: [B-] Final score: ${percentage}%`;
+                document.getElementById("popup-title").innerHTML = ` Grade: [B-] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.77 && percentageRaw < 0.8) {
-                document.getElementById("popup-title").innerHTML = `Grade: [C+] Final score: ${percentage}%`;
+                document.getElementById("popup-title").innerHTML = ` Grade: [C+] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.74 && percentageRaw < 0.77) {
-                document.getElementById("popup-title").innerHTML = `Grade: [C] Final score: ${percentage}%`;
+                document.getElementById("popup-title").innerHTML = ` Grade: [C] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.7 && percentageRaw < 0.74) {
-                document.getElementById("popup-title").innerHTML = `Grade: [C-] Final score: ${percentage}%`;
+                document.getElementById("popup-title").innerHTML = ` Grade: [C-] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.67 && percentageRaw < 0.7) {
-                document.getElementById("popup-title").innerHTML = `Grade: [D+] Final score: ${percentage}%`;
+                document.getElementById("popup-title").innerHTML = ` Grade: [D+] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.64 && percentageRaw < 0.67) {
-                document.getElementById("popup-title").innerHTML = `Grade: [D] Final score: ${percentage}%`;
+                document.getElementById("popup-title").innerHTML = ` Grade: [D] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.6 && percentageRaw < 0.64) {
-                document.getElementById("popup-title").innerHTML = `Grade: [D-] Final score: ${percentage}%`;
+                document.getElementById("popup-title").innerHTML = ` Grade: [D-] Final score: ${percentage}%`;
             }
             else {
-                document.getElementById("popup-title").innerHTML = `Grade: [F] Final score: ${percentage}%`;
+                document.getElementById("popup-title").innerHTML = ` Grade: [F] Final score: ${percentage}%`;
             }
             document.getElementById("dismiss-popup-btn").innerHTML = `Dismiss`;
 
