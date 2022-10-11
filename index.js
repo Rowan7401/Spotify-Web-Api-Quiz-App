@@ -271,7 +271,7 @@ const UIController = (function () {
             var random_nums = [];
             var n = 3;
             do {
-                const randomNumber = Math.floor(Math.random() * 3000000);
+                const randomNumber = Math.floor(Math.random() * 10000000);
 
                 if (!random_nums.includes(randomNumber)) {
                     random_nums.push(randomNumber);
@@ -870,37 +870,28 @@ const UIController = (function () {
             artistTopTen.tracks[5], artistTopTen.tracks[6], artistTopTen.tracks[7],
             artistTopTen.tracks[8], artistTopTen.tracks[9]];
 
-            var random_nums = [];
-            var n = 4;
-            do {
-                const randomNumber = Math.floor(Math.random() * 10);
+            var rand = Math.floor(Math.random() * 10);
+            var real_track = top_tracks[rand].popularity;
 
-                if (!random_nums.includes(randomNumber)) {
-                    random_nums.push(randomNumber);
+            var fake_tracks = [];
+            var n = 3;
+            do {
+                var randomNumber = Math.floor(Math.random() * 10);
+                var track_popularity = top_tracks[randomNumber].popularity;
+
+                if (!fake_tracks.includes(track_popularity) && randomNumber != rand && track_popularity != real_track) {
+                    fake_tracks.push(track_popularity);
                 }
 
-            } while (random_nums.length < n);
-
-            var tracks_pop = [];
-            var x = 4;
-            var i = 0;
-            do {
-                const artistPop = top_tracks[random_nums[i]].popularity;
-
-                if (!tracks_pop.includes(artistPop)) {
-                    tracks_pop.push(artistPop);
-                    i++;
-                }
-
-            } while (tracks_pop.length < x);
+            } while (fake_tracks.length < n);
 
 
-            real_track = tracks_pop[0];
-            fake_track1 = tracks_pop[1];
-            fake_track2 = tracks_pop[2];
-            fake_track3 = tracks_pop[3];
+            var fake_track1 = fake_tracks[0];
+            var fake_track2 = fake_tracks[1];
+            var fake_track3 = fake_tracks[2];
 
-            var song_name = top_tracks[random_nums[0]].name;
+
+            var song_name = top_tracks[rand].name;
 
             document.getElementById("hot-streak-q").innerHTML = `What is the popularity of "${song_name}"? (100 = most popular)`;
 
@@ -1202,6 +1193,8 @@ const APPController = (function (UICtrl, APICtrl) {
 
         document.getElementsByClassName("reset-page")[0].classList.remove("active");
         document.getElementsByClassName("question")[0].classList.add("active");
+        UICtrl.removeAlbumImage();
+        document.getElementById("score").innerHTML = ``;
 
         console.log(score_board)
         hotStreakQuestion();
@@ -1213,6 +1206,8 @@ const APPController = (function (UICtrl, APICtrl) {
 
         document.getElementsByClassName("reset-page")[0].classList.remove("active");
         document.getElementsByClassName("question")[0].classList.add("active");
+        document.getElementById("score").innerHTML = ``;
+        UICtrl.removeAlbumImage();
 
         console.log(score_board)
         fullTest();
@@ -1278,7 +1273,7 @@ const APPController = (function (UICtrl, APICtrl) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async function checkHotStreakAnswer() {
+    function checkHotStreakAnswer() {
         if (score_board[1] == 0) {
             console.log("Correct")
             hotStreakPopup(score_board);
@@ -1367,6 +1362,7 @@ const APPController = (function (UICtrl, APICtrl) {
             DBtn.addEventListener("click", DClick);
 
             submit.style.display = "none";
+            document.getElementById("fire").innerHTML = `🔥`
         }
 
 
@@ -1448,7 +1444,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
     }
 
-    async function fullTest() {
+    function fullTest() {
         var sel_question;
         if (i > 11) {
             sel_question = i;
@@ -1660,7 +1656,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
     }
 
-    async function hotStreakPopup() {
+    function hotStreakPopup() {
         document.getElementsByClassName("popup")[0].classList.add("active");
 
         document.getElementById("score").innerHTML += ` Hot Streak of ${score_board[0]}!`;
@@ -1669,7 +1665,7 @@ const APPController = (function (UICtrl, APICtrl) {
         dismiss_btn.addEventListener("click", dismissPopup);
 
         if (score_board[1] != 0) {
-            document.getElementById("score").innerHTML += `Final Score: Hot Streak of ${score_board[0]}!`;
+            document.getElementById("score").innerHTML = `Final Score: Hot Streak of ${score_board[0]}!`;
             document.getElementById("dismiss-popup-btn").innerHTML = `Dismiss`;
             if (score_board[0] < 5) {
                 document.getElementById("popup-title").innerHTML = `🧊Game Over!🧊 Cold round...`;
@@ -1704,7 +1700,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
     }
 
-    async function fullTestPopup() {
+    function fullTestPopup() {
         document.getElementsByClassName("popup")[0].classList.add("active");
 
         var totalQ = score_board[0] + score_board[1];
