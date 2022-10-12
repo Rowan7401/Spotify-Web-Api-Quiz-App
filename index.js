@@ -1711,7 +1711,7 @@ const APPController = (function (UICtrl, APICtrl) {
         dismiss_btn.addEventListener("click", dismissPopup);
 
         var percentageRaw = score_board[0] / totalQ;
-        var percentage = (percentageRaw.toFixed(4)) * 100;
+        var percentage = Math.round(percentageRaw * 10000) / 100;
 
         console.log(extraQuestions);
         if (!extraQuestions) {
