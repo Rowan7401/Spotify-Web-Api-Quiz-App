@@ -220,7 +220,7 @@ const UIController = (function () {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
             document.getElementsByClassName("artist-detail")[0].classList.add("active");
 
-            document.getElementById("hot-streak-q").innerHTML = `What does Spotify rate this ${artist.name}'s popularity? (100 = most popular)`;
+            document.getElementById("hot-streak-q").innerHTML = `What does Spotify rate ${artist.name}'s popularity? (100 = most popular)`;
 
             var real_ranking = artist.popularity;
 
