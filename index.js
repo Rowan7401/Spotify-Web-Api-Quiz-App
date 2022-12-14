@@ -1,17 +1,17 @@
-const API_TOKEN_URL = "https://powerful-headland-45261.herokuapp.com/https://accounts.spotify.com/api/token";
-const GET_SEVERAL_ARTISTS = "https://powerful-headland-45261.herokuapp.com/"
+const API_TOKEN_URL = "https://accounts.spotify.com/api/token";
+const GET_SEVERAL_ARTISTS = ""
     + "https://api.spotify.com/v1/artists?"
     + "ids=3yY2gUcIsjMr8hjo51PoJ8%2C6olE6TJLqED3rqDCT0FyPh%2C7rkW85dBwwrJtlHRDkJDAC%2C3qiHUAX7zY4Qnjx8TNUzVx" +
     "%2C2kxP07DLgs4xlWz8YHlvfh%2C2IDLDx25HU1nQMKde4n61a%2C3MZsBdqDrRTJihTHQrO6Dq%2C4Gso3d4CscCijv0lmajZWs%2C6Xgp2XMz1fhVYe7i6yNAax" +
     "%2C78rUTD7y6Cy67W1RVzYs7t%2C1Xyo4u8uXC1ZmMpatF05PJ" + "%2C4MCBfE4596Uoi2O4DtmEMz" + "%2C5K4W6rqBFWDnAN6FQUkS6x" +
     "%2C0hCNtLu0JehylgoiP8L4Gh" + "%2C181bsRPaVXVlUKXrxwZfHK" + "%2C5cj0lLjcoR7YOSnhnX0Po5" + "%2C5delTPpDAtBDsjk60f5xnt" +
-    "%2C4O15NlyKLIASxsJ0PrXPfz" + "%2C246dkjvS1zLTtiykXe5h60";
-const GET_ARTIST = `https://powerful-headland-45261.herokuapp.com/https://api.spotify.com/v1/artists/{{artistId}}`
-const GET_ARTIST_TOP_TRACKS = `https://powerful-headland-45261.herokuapp.com/https://api.spotify.com/v1/artists/{id}/top-tracks?market=US`
-const GET_RELATED_ARTISTS = "https://powerful-headland-45261.herokuapp.com/https://api.spotify.com/v1/artists/{id}/related-artists"
-const GET_TRACKS = "https://powerful-headland-45261.herokuapp.com/https://api.spotify.com/v1/tracks?market=US&ids={id}";
-const GET_TRACKS_ANALYSIS = "https://powerful-headland-45261.herokuapp.com/https://api.spotify.com/v1/audio-features?ids={id}";
-const GET_ALBUMS = "https://powerful-headland-45261.herokuapp.com/https://api.spotify.com/v1/artists/{id}/albums?include_groups=album&market=US&limit=30&offset=5";
+    "%2C4O15NlyKLIASxsJ0PrXPfz" + "%2C246dkjvS1zLTtiykXe5h60" + "%2C6l3HvQ5sa6mXTsMTB19rO5" +"%2C1RyvyyTE3xzB2ZywiAwp0i";
+const GET_ARTIST = `https://api.spotify.com/v1/artists/{{artistId}}`
+const GET_ARTIST_TOP_TRACKS = `https://api.spotify.com/v1/artists/{id}/top-tracks?market=US`
+const GET_RELATED_ARTISTS = "https://api.spotify.com/v1/artists/{id}/related-artists"
+const GET_TRACKS = "https://api.spotify.com/v1/tracks?market=US&ids={id}";
+const GET_TRACKS_ANALYSIS = "https://api.spotify.com/v1/audio-features?ids={id}";
+const GET_ALBUMS = "https://api.spotify.com/v1/artists/{id}/albums?include_groups=album&market=US&limit=30&offset=5";
 
 const APIController = (function () {
 
