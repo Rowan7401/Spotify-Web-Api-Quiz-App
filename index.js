@@ -1,16 +1,21 @@
 const API_TOKEN_URL = "https://accounts.spotify.com/api/token";
-const GET_SEVERAL_ARTISTS = ""
-    + "https://api.spotify.com/v1/artists?"
-    + "ids=3yY2gUcIsjMr8hjo51PoJ8%2C6olE6TJLqED3rqDCT0FyPh%2C7rkW85dBwwrJtlHRDkJDAC%2C3qiHUAX7zY4Qnjx8TNUzVx" +
-    "%2C2kxP07DLgs4xlWz8YHlvfh%2C2IDLDx25HU1nQMKde4n61a%2C3MZsBdqDrRTJihTHQrO6Dq%2C4Gso3d4CscCijv0lmajZWs%2C6Xgp2XMz1fhVYe7i6yNAax" +
+
+const GET_SEVERAL_ARTISTS =
+      "https://api.spotify.com/v1/artists?"
+    + "ids=3yY2gUcIsjMr8hjo51PoJ8%2C6olE6TJLqED3rqDCT0FyPh%2C7rkW85dBwwrJtlHRDkJDAC%2C3qiHUAX7zY4Qnjx8TNUzVx%2C" + 
+    "4kqFrZkeqDfOIEqTWqbOOV%2C" + "4Ga1P7PMIsmqEZqhYZQgDo%2C" + "4hR6Bm9YYtktXzjmKhb1Cn%2C" + "2eVTKG3Z5bbKk2OWMIe3iL%2C"
+    + "3hOdow4ZPmrby7Q1wfPLEy%2C" + "35l9BRT7MXmM8bv2WDQiyB%2C" + "6TIYQ3jFPwQSRmorSezPxX%2C" + 
+    "2kxP07DLgs4xlWz8YHlvfh%2C2IDLDx25HU1nQMKde4n61a%2C3MZsBdqDrRTJihTHQrO6Dq%2C4Gso3d4CscCijv0lmajZWs%2C6Xgp2XMz1fhVYe7i6yNAax" +
     "%2C78rUTD7y6Cy67W1RVzYs7t%2C1Xyo4u8uXC1ZmMpatF05PJ" + "%2C4MCBfE4596Uoi2O4DtmEMz" + "%2C5K4W6rqBFWDnAN6FQUkS6x" +
     "%2C0hCNtLu0JehylgoiP8L4Gh" + "%2C181bsRPaVXVlUKXrxwZfHK" + "%2C5cj0lLjcoR7YOSnhnX0Po5" + "%2C5delTPpDAtBDsjk60f5xnt" +
     "%2C4O15NlyKLIASxsJ0PrXPfz" + "%2C246dkjvS1zLTtiykXe5h60" + "%2C6l3HvQ5sa6mXTsMTB19rO5" +"%2C1RyvyyTE3xzB2ZywiAwp0i";
+
 const GET_ARTIST = `https://api.spotify.com/v1/artists/{{artistId}}`
 const GET_ARTIST_TOP_TRACKS = `https://api.spotify.com/v1/artists/{id}/top-tracks?market=US`
 //const GET_RELATED_ARTISTS = "https://api.spotify.com/v1/artists/{id}/related-artists"
 const GET_TRACKS = "https://api.spotify.com/v1/tracks?market=US&ids={id}";
-const GET_TRACKS_ANALYSIS = "https://api.spotify.com/v1/audio-features?ids={id}";
+// const GET_TRACKS_ANALYSIS = "https://api.spotify.com/v1/audio-features/{id}";
+
 const GET_ALBUMS = "https://api.spotify.com/v1/artists/{id}/albums?include_groups=album&market=US&limit=30&offset=5";
 
 const APIController = (function () {
@@ -97,18 +102,18 @@ const APIController = (function () {
         return data;
     }
 
-    const _getTracksAnalysis = async (token, tracksId) => {
-        var url = GET_TRACKS_ANALYSIS;
-        url = url.replace("{id}", tracksId);
-        const result = await fetch(`${url}`, {
-            method: 'GET',
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
+    // const _getTracksAnalysis = async (token, tracksId) => {
+    //     var url = GET_TRACKS_ANALYSIS;
+    //     url = url.replace("{id}", tracksId);
+    //     const result = await fetch(`${url}`, {
+    //         method: 'GET',
+    //         headers: { 'Authorization': 'Bearer ' + token }
+    //     });
 
-        const data = await result.json();
+    //     const data = await result.json();
 
-        return data;
-    }
+    //     return data;
+    // }
 
     const _getArtistAlbums = async (token, artistId) => {
         var url = GET_ALBUMS;
@@ -139,9 +144,9 @@ const APIController = (function () {
         // getRelatedArtists(token, artistId) {
         //     return _getRelatedArtists(token, artistId);
         // },
-        getTracksAnalysis(token, tracksId) {
-            return _getTracksAnalysis(token, tracksId);
-        },
+        // getTracksAnalysis(token, tracksId) {
+        //     return _getTracksAnalysis(token, tracksId);
+        // },
         getArtistAlbums(token, artistId) {
             return _getArtistAlbums(token, artistId);
         },
@@ -336,7 +341,7 @@ const UIController = (function () {
 
             const random_genres = ["canadian hip hop", "canadian trap", "hip hop", "melodic rap", "rap", "toronto rap", "trap",
                 "vapor trap", "pop", "alternative rock", "grunge", "permanent wave", "rock", "alternative r&b", "viral pop", "indonesian r&b",
-                "indonesian hip hop"];
+                "indonesian hip hop", "pluggnb", "r&b", "hyperpop", "glitchcore", "glitch rap", "reggaeton"];
 
             var difference = random_genres.filter(x => real_genres.indexOf(x) === -1);
 
@@ -364,12 +369,14 @@ const UIController = (function () {
 
             submit.addEventListener("click", submitAnswer);
             function submitAnswer(event) {
+                console.log("submit clicked")
                 if (artist.genres.length == 1) {
                     if (document.getElementById("checkbox2").checked
                         && document.getElementById("checkbox3").checked
                         && document.getElementById("checkbox4").checked
                         && document.getElementById("checkbox1").checked == false) {
                         score_board[0]++;
+        
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
                         document.getElementById("fire").innerHTML = `✔️`
 
@@ -388,6 +395,7 @@ const UIController = (function () {
                         && document.getElementById("checkbox1").checked == false
                         && document.getElementById("checkbox2").checked == false) {
                         score_board[0]++;
+                        
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
                         document.getElementById("fire").innerHTML = `✔️`
 
@@ -404,6 +412,7 @@ const UIController = (function () {
                     if (document.getElementById("checkbox4").checked && document.getElementById("checkbox1").checked == false
                         && document.getElementById("checkbox2").checked == false && document.getElementById("checkbox3").checked == false) {
                         score_board[0]++;
+                      
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
                         document.getElementById("fire").innerHTML = `✔️`
 
@@ -422,9 +431,9 @@ const UIController = (function () {
                 document.getElementById("checkbox3").parentNode.style.display = 'none';
                 document.getElementById("checkbox4").parentNode.style.display = 'none';
                 document.getElementsByClassName("qbox")[0].classList.remove("active");
+              
             }
-
-            return score_board;
+           
         },
         topTracks(artist, artistTopTracks, mc_spots) {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
@@ -1127,11 +1136,12 @@ const APPController = (function (UICtrl, APICtrl) {
     var artistSelected = false;
     var extraQuestions = true;
 
+
     var i = 0;
     var random_nums = [];
-    var n = 12;
+    var n = 11;
     do {
-        const randomNumber = Math.floor(Math.random() * 12);
+        const randomNumber = Math.floor(Math.random() * 11);
         if (!random_nums.includes(randomNumber)) {
             random_nums.push(randomNumber);
         }
@@ -1261,7 +1271,7 @@ const APPController = (function (UICtrl, APICtrl) {
         }
 
         artistTopTen = await APICtrl.getTracks(token, tracksId);
-        artistTopTenAnalysis = await APICtrl.getTracksAnalysis(token, tracksId);
+        // artistTopTenAnalysis = await APICtrl.getTracksAnalysis(token, tracksId);
 
         artistAlbums = await APICtrl.getArtistAlbums(token, artistId);
         for (var i = 0; i < artistAlbums.items.length; i++) {
@@ -1389,11 +1399,17 @@ const APPController = (function (UICtrl, APICtrl) {
             checkChooseQAnswer(correct);
         }
 
-        function GenresClick(event) {
+        async function GenresClick(event) {
             qType = true;
             console.log("genres clicked")
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+
             document.getElementsByClassName("question")[0].classList.add("active");
+            document.getElementsByClassName("chooseQ-game")[0].classList.remove("active");
+            document.getElementsByClassName("qbox")[0].classList.add("active");
+
+            var old_correct = score_board[0]; 
+
             UICtrl.genres(artist, score_board);
             
             genres.removeEventListener("click", GenresClick);
@@ -1404,8 +1420,23 @@ const APPController = (function (UICtrl, APICtrl) {
             album_tracks.removeEventListener("click", AlbumTracksClick);
             album_release.removeEventListener("click", AlbumReleaseClick);
 
-            document.getElementsByClassName("chooseQ-game")[0].classList.remove("active");
-            document.getElementsByClassName("qbox")[0].classList.add("active");
+            for (let i = 0; i < 50; i++) {
+                var qbox_active = document.getElementsByClassName('qbox active').length > 0;
+                if (qbox_active) {
+                    console.log(`Waiting ${i / 2} seconds...`);
+                    await sleep(i * 500);
+                }
+                else {
+                    break;
+                }
+                
+            }
+            var new_correct = score_board[0];
+            if (new_correct > old_correct) {
+                correct = true;
+            }
+            checkChooseQAnswer(correct);
+                        
         }
         function TopTracksClick(event) {
             console.log("top tracks clicked")
@@ -1513,8 +1544,11 @@ const APPController = (function (UICtrl, APICtrl) {
             UICtrl.createAlbumImage(albums[randomAlbumIndex].images[1].url, albums[randomAlbumIndex].name);
         }
 
+        console.log("beforoe timeout")
+        console.log(qType)
 
     }
+
     function setQuestionBoxType(qType, AClick, BClick, CClick, DClick) {
         submit = document.getElementById("submit");
         if (qType) {
@@ -1554,7 +1588,6 @@ const APPController = (function (UICtrl, APICtrl) {
     }
 
     function checkChooseQAnswer(correct) {
-        console.log(correct)
         if (correct) {
             console.log("Correct")
             document.getElementById("popup-title").innerHTML = `Correct!!`;
@@ -1570,7 +1603,7 @@ const APPController = (function (UICtrl, APICtrl) {
     }
 
     async function hotStreakQuestion() {
-        var sel_question = Math.floor(Math.random() * 12);
+        var sel_question = Math.floor(Math.random() * 10);
         document.getElementsByClassName("qbox")[0].classList.add("active");
         var mc_spots = Math.floor(Math.random() * 4);
 
@@ -1592,32 +1625,26 @@ const APPController = (function (UICtrl, APICtrl) {
             UICtrl.topTracks(artist, artistTopTracks, mc_spots)
         }
         else if (sel_question == 4) {
-            UICtrl.related(artist, relatedArtists, score_board, mc_spots);
-        }
-        else if (sel_question == 5) {
             UICtrl.trackRelease(artistTopTen, mc_spots);
         }
-        else if (sel_question == 6) {
+        else if (sel_question == 5) {
             UICtrl.trackLength(artistTopTen, mc_spots);
         }
-        else if (sel_question == 7) {
-            UICtrl.trackAnalysis(artistTopTen, artistTopTenAnalysis, mc_spots);
-        }
-        else if (sel_question == 8) {
+        else if (sel_question == 6) {
             UICtrl.trackPopularity(artistTopTen, mc_spots);
         }
-        else if (sel_question == 9) {
+        else if (sel_question == 7) {
             UICtrl.albumCount(albums, artist, artistAlbums, mc_spots);
         }
-        else if (sel_question == 10) {
+        else if (sel_question == 8) {
             UICtrl.albumTrackCount(albums, mc_spots, randomAlbumIndex);
         }
-        else if (sel_question == 11) {
+        else if (sel_question == 9) {
             UICtrl.albumRelease(albums, mc_spots, randomAlbumIndex);
         }
 
         submit = document.getElementById("submit");
-        if (sel_question == 2 || sel_question == 4) {
+        if (sel_question == 2) {
             q1.style.display = "none";
             q2.style.display = "none";
             q3.style.display = "none";
@@ -1730,32 +1757,9 @@ const APPController = (function (UICtrl, APICtrl) {
     }
 
     function fullTest() {
-        var sel_question;
-        if (i > 11) {
-            sel_question = i;
-        }
-        else {
-            sel_question = random_nums[i];
-        }
+        var sel_question = score_board[0] + score_board[1];
         fullTestQuestion(sel_question);
-        i++;
-        if (i == 18) {
-            extraQuestions = false;
-        }
-
-    }
-
-    function fullTest() {
-        var sel_question;
-        if (i > 11) {
-            sel_question = i;
-        }
-        else {
-            sel_question = random_nums[i];
-        }
-        fullTestQuestion(sel_question);
-        i++;
-        if (i == 18) {
+        if (sel_question == 13) {
             extraQuestions = false;
         }
 
@@ -1784,54 +1788,39 @@ const APPController = (function (UICtrl, APICtrl) {
             UICtrl.topTracks(artist, artistTopTracks, mc_spots)
         }
         else if (sel_question == 4) {
-            UICtrl.related(artist, relatedArtists, score_board, mc_spots);
+            UICtrl.trackRelease(artistTopTen, mc_spots);
         }
         else if (sel_question == 5) {
-            UICtrl.trackRelease(artistTopTen, mc_spots);
-        }
-        else if (sel_question == 6) {
             UICtrl.trackLength(artistTopTen, mc_spots);
         }
-        else if (sel_question == 7) {
-            UICtrl.trackAnalysis(artistTopTen, artistTopTenAnalysis, mc_spots);
-        }
-        else if (sel_question == 8) {
+        else if (sel_question == 6) {
             UICtrl.trackPopularity(artistTopTen, mc_spots);
         }
-        else if (sel_question == 9) {
+        else if (sel_question == 7) {
             UICtrl.albumCount(albums, artist, artistAlbums, mc_spots);
         }
-        else if (sel_question == 10) {
+        else if (sel_question == 8) {
             UICtrl.albumTrackCount(albums, mc_spots, randomAlbumIndex);
         }
-        else if (sel_question == 11) {
+        else if (sel_question == 9) {
             UICtrl.albumRelease(albums, mc_spots, randomAlbumIndex);
         }
-        else if (sel_question == 12) {
-            UICtrl.trackAnalysis(artistTopTen, artistTopTenAnalysis, mc_spots);
-        }
-        else if (sel_question == 13) {
-            UICtrl.trackAnalysis(artistTopTen, artistTopTenAnalysis, mc_spots);
-        }
-        else if (sel_question == 14) {
+        else if (sel_question == 10) {
             UICtrl.trackPopularity(artistTopTen, mc_spots);
         }
-        else if (sel_question == 15) {
-            UICtrl.trackAnalysis(artistTopTen, artistTopTenAnalysis, mc_spots);
-        }
-        else if (sel_question == 16) {
+        else if (sel_question == 11) {
             UICtrl.trackRelease(artistTopTen, mc_spots);
         }
-        else if (sel_question == 17) {
+        else if (sel_question == 12) {
             UICtrl.albumTrackCount(albums, mc_spots, randomAlbumIndex);
         }
-        else if (sel_question == 18) {
+        else if (sel_question == 13) {
             UICtrl.albumRelease(albums, mc_spots, randomAlbumIndex);
         }
 
         var checkboxQ;
         submit = document.getElementById("submit");
-        if (sel_question == 2 || sel_question == 4) {
+        if (sel_question == 2) {
             q1.style.display = "none";
             q2.style.display = "none";
             q3.style.display = "none";
