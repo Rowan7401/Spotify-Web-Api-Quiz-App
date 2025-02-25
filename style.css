@@ -1,7 +1,11 @@
 body {
+  display: flex;
   min-height: 100vh;
   background: linear-gradient(to top, #272727, #aaa7a7);
   margin: 0%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .dashboard {
   flex: 1.5;
@@ -13,26 +17,36 @@ body {
 }
 .landing-header {
   display: flex;
+  width: 100%;
   flex-direction: row;
   overflow: hidden;
-  height: 7rem;
+  height: 5rem;
   background: rgb(80, 78, 78);
-  border-bottom: 8px solid black; 
-  padding-left: 3rem;
+  border-bottom: 0.5rem solid black; 
+  padding: 1rem;
   align-items: center;
 }
+
 .logo {
   width: 5.5rem;
   height: auto;
 }
 
-h2 {
+.landing-header h2,
+.landing-header h4 {
+  padding: 6.75rem; 
+  font-size: 1rem; 
+  font-family: Copperplate Gothic Light, sans-serif;
+  color: rgb(164, 164, 164);
+}
+
+/* h2 {
   text-align: center;
   font-size: 1rem;
   padding-left: 15rem;
   color: rgb(164, 164, 164);
   font-family: Copperplate Gothic Light, sans-serif;
-}
+} */
 #title {
   color: #fff;
   text-align: center;
@@ -70,13 +84,13 @@ h2 {
   font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
-h4 {
+/* h4 {
   text-align: center;
   font-size: 1.25rem;
   padding-left: 4rem;
   color: rgb(168, 164, 164);
   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
-}
+} */
 h5 {
   font-size: 0.75rem;
   padding-right: 2rem;
@@ -164,7 +178,7 @@ ul.ks-cboxtags {
 }
 .qbox {
   position: absolute;
-  border: 8px solid black;
+  border: 0.02rem solid black;
   box-sizing: border-box;
   z-index: 2;
   opacity: 0;
@@ -177,7 +191,7 @@ ul.ks-cboxtags {
     rgba(255, 255, 255, 0.3)
   );
   border-radius: 1.5rem;
-  padding-left: 0.7rem;
+  padding: 0.7rem;
   top: -200%;
   transform: translate(-50%, -50%) scale(0.5);
   transition: opacity 300ms ease-in-out, top 1000ms ease-in-out, transform 1000ms ease-in-out;
@@ -545,13 +559,13 @@ ul.ks-cboxtags {
   cursor: pointer;
   background: transparent;
   color: white;
-  border: 0.25px solid #91C9FF;
   border-radius: 0.2rem;
   outline: none;
   transition: 1s ease-in-out;
   font-family: 'Times New Roman', Times, serif;
   font-size: 1.25rem;
-  margin-bottom: 1rem;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .hot-streak-btn:hover {
@@ -601,5 +615,67 @@ label {
   font-size: 1.2rem;
   font-weight: bold;
   display: block;
+}
+
+@media (max-width: 768px) {
+  .landing-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .landing-header h2,
+    .landing-header h4 {
+      padding: 0.75rem; 
+      font-size: 0.5rem; 
+      font-family: Copperplate Gothic Light, sans-serif;
+      color: rgb(164, 164, 164);
+  }
+
+  .hot-streak-btn {
+    width: 3rem;
+    height: auto;
+    cursor: pointer;
+    background: transparent;
+    color: white;
+    border-radius: 0.05rem;
+    outline: none;
+    transition: 1s ease-in-out;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 0.55rem;
+    padding: 0.3rem;
+    margin-bottom: 0.2rem;
+  }
+
+  #title {
+    font-size: 2rem;
+    padding-left: 0;
+  }
+
+  .dashboard {
+    width: 90%;
+    margin: 1rem auto;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+
+  .gameModes button {
+    font-size: 1rem;
+    padding: 0.8rem;
+  }
+
+  .qbox {
+    width: 100%;
+    min-height: auto;
+    padding: 1rem;
+  }
+
+  .mc-buttons {
+    flex-direction: column;
+  }
+
+  .mcbtn {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
 }
     
