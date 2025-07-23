@@ -1949,7 +1949,7 @@ const APPController = (function (UICtrl, APICtrl) {
     }
 
     function hotStreakPopup() {
-        document.getElementsByClassName("popup")[0].classList.add("active");
+        document.getElementsByClassName("popup-center")[0].classList.add("active");
 
         document.getElementById("score").innerHTML += ` Hot Streak of ${score_board[0]}!`;
 
@@ -1976,12 +1976,12 @@ const APPController = (function (UICtrl, APICtrl) {
             if (score_board[1] == 0) {
                 document.getElementById("score").innerHTML = ``;
                 dismiss_btn.removeEventListener("click", dismissPopup);
-                document.getElementsByClassName("popup")[0].classList.remove("active");
+                document.getElementsByClassName("popup-center")[0].classList.remove("active");
                 UICtrl.removeAlbumImage();
                 hotStreakQuestion();
             }
             else {
-                document.getElementsByClassName("popup")[0].classList.remove("active");
+                document.getElementsByClassName("popup-center")[0].classList.remove("active");
                 document.getElementsByClassName("question")[0].classList.remove("active");
                 document.getElementsByClassName("reset-page")[0].classList.add("active");
                 dismiss_btn.removeEventListener("click", dismissPopup);
@@ -1993,7 +1993,7 @@ const APPController = (function (UICtrl, APICtrl) {
     }
 
     function fullTestPopup() {
-        document.getElementsByClassName("popup")[0].classList.add("active");
+        document.getElementsByClassName("popup-center")[0].classList.add("active");
 
         var totalQ = score_board[0] + score_board[1];
 
@@ -2054,12 +2054,12 @@ const APPController = (function (UICtrl, APICtrl) {
             if (extraQuestions) {
                 document.getElementById("score").innerHTML = ``;
                 dismiss_btn.removeEventListener("click", dismissPopup);
-                document.getElementsByClassName("popup")[0].classList.remove("active");
+                document.getElementsByClassName("popup-center")[0].classList.remove("active");
                 UICtrl.removeAlbumImage();
                 fullTest();
             }
             else {
-                document.getElementsByClassName("popup")[0].classList.remove("active");
+                document.getElementsByClassName("popup-center")[0].classList.remove("active");
                 document.getElementsByClassName("question")[0].classList.remove("active");
                 document.getElementsByClassName("reset-page")[0].classList.add("active");
                 dismiss_btn.removeEventListener("click", dismissPopup);
@@ -2071,7 +2071,7 @@ const APPController = (function (UICtrl, APICtrl) {
     }
 
     function chooseQAnswerPopUp() {
-        document.getElementsByClassName("popup")[0].classList.add("active");
+        document.getElementsByClassName("popup-center")[0].classList.add("active");
 
         document.getElementById("score").innerHTML += ` Score ${score_board[0]} / ${score_board[1] + score_board[0]}!`;
 
@@ -2084,7 +2084,7 @@ const APPController = (function (UICtrl, APICtrl) {
             document.getElementById("score").innerHTML = ``;
             UICtrl.removeAlbumImage();
             dismiss_btn.removeEventListener("click", dismissPopup);
-            document.getElementsByClassName("popup")[0].classList.remove("active");
+            document.getElementsByClassName("popup-center")[0].classList.remove("active");
             
             document.getElementsByClassName("question")[0].classList.remove("active");
             document.getElementsByClassName("chooseQ-game")[0].classList.add("active");

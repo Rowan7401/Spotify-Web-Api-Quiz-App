@@ -11,143 +11,157 @@
 </head>
 
 <body>
+
     <div class="landing-header">
         <img src="spotify.png" alt="spotify logo" class="logo" />
-        <div id="title">
-            <span>Spotistatify</span>
+
+        <div class="headerText">
+            <div id="title">
+                <span>Spotistatify</span>
+            </div>
+            <h2>A music stats quiz app by Rowan Dillon</h2>
+            <h4><a href="https://github.com/Rowan7401">My Github</a></h4>
         </div>
-        <h2>A music stats quiz app by Rowan Dillon</h2>
-        <h4><a href="https://github.com/Rowan7401">github.com/Rowan7401</a></h4>
+
     </div>
     <div class="dashboard">
-        <div id="prompt-title">
-            <header id="chooseArtist">
-                Choose an artist from the drop down you would like to be quizzed on
-            </header>
-        </div>
-        <div class="dropdown">
-            <form action="">
-                <input type="hidden" name="" id='hidden_token'>
-                <span class="artistHeader">Artists:</span>
-                <select name="" id="select_artist" class="form-control form-control-sm col-sm-10"></select>
-            </form>
-        </div>
+        <div class="screen-container">
+            <div id="prompt-title">
+                Choose an artist to be quizzed on
+            </div>
+            <div class="dropdown">
+                <form action="">
+                    <input type="hidden" name="" id='hidden_token'>
+                    <span class="artistHeader">Artists:</span>
+                    <select name="" id="select_artist"></select>
+                </form>
+            </div>
 
-        <div class="artist-detail">
-            <div id="artist-detail"></div>
-        </div>
+            <div class="artist-detail">
+                <div id="artist-detail"></div>
+            </div>
 
-        <div class="album-detail">
-            <div id="album-detail"></div>
-        </div>
-        
-        <div class="chooseGame">
-            <header class="prompts" id="prompt">
-                <h3>[]</h3>
-            </header>
-            <div class="gameModes">
-                <button type="button" class="hot-streak-btn" id="hsbtn">Hot Streak</button>
-                <h5>Fast paced. 33s to answer! Get as many qs correct in a row for the best streak!</h5>
-                <button type="button" class="hot-streak-btn" id="chbtn">Choose Your Question</button>
-                <h5>Choose what you are quizzed on!</h5>
-                <!-- <button type="button" class="hot-streak-btn" id="hlbtn">Higher or Lower</button>
+            <div class="album-detail">
+                <div id="album-detail"></div>
+            </div>
+
+            <div class="chooseGame">
+                <header class="prompts" id="prompt">
+                    <h3>[]</h3>
+                </header>
+
+                <div class="gameModes">
+                    <h5>Fast paced. 33s to answer! Get as many qs correct in a row for the best streak!</h5>
+                    <h5>Choose what you are quizzed on!</h5>
+                    <h5>How well do you know the artist? Quiz yourself on all artists statistical endpoints! No time
+                        limit</h5>
+                </div>
+
+                <div class="gameModes">
+                    <button type="button" class="hot-streak-btn" id="hsbtn">Hot Streak</button>
+                    <button type="button" class="hot-streak-btn" id="chbtn">Choose Your Question</button>
+                    <!-- <button type="button" class="hot-streak-btn" id="hlbtn">Higher or Lower</button>
                 <h5>Guess higher or lower on statistics! Get as many correct in row! No time limit</h5> -->
-                <button type="button" class="hot-streak-btn" id="testbtn">Full Test</button>
-                <h5>How well do you know the artist? Quiz yourself on all artists statistical endpoints! No time limit</h5>
+                    <button type="button" class="hot-streak-btn" id="testbtn">Full Test</button>
+
+                </div>
+            </div>
+
+            <div class="question">
+                <header class="prompts" id="hot-streak-q">
+                    <h3>[]</h3>
+                </header>
+            </div>
+
+            <div class="qbox">
+                <div class="questions">
+                    <header id="q1">
+                        <h3>[] </h3>
+                    </header>
+
+                    <header id="q2">
+                        <h3>[] </h3>
+                    </header>
+
+                    <header id="q3">
+                        <h3>[] </h3>
+                    </header>
+
+                    <header id="q4">
+                        <h3>[] </h3>
+                    </header>
+                </div>
+
+                <ul class="ks-cboxtags">
+                    <li><input type="checkbox" id="checkbox1" value="answer1"><label for="checkbox1"
+                            id="label1">[]</label>
+                    </li>
+                    <li><input type="checkbox" id="checkbox2" value="answer2"><label for="checkbox2"
+                            id="label2">[]</label>
+                    </li>
+                    <li><input type="checkbox" id="checkbox3" value="answer3"><label for="checkbox3"
+                            id="label3">[]</label>
+                    </li>
+                    <li><input type="checkbox" id="checkbox4" value="answer4"><label for="checkbox4"
+                            id="label4">[]</label>
+                    </li>
+                </ul>
+
+                <div class="mc-buttons">
+                    <button type="button" class="mcbtn" id="Abtn">A</button>
+                    <button type="button" class="mcbtn" id="Bbtn">B</button>
+                    <button type="button" class="mcbtn" id="Cbtn">C</button>
+                    <button type="button" class="mcbtn" id="Dbtn">D</button>
+
+                    <button type="input" class="submit-btn" id="submit">Submit</button>
+                </div>
+
+            </div>
+
+            <div class="chooseQ-game">
+                <div class="chooseQ-buttons">
+                    <button type="button" class="chooseQ-btn" id="genres">Unrelated Genres</button>
+                    <button type="button" class="chooseQ-btn" id="top-tracks">Top Tracks</button>
+                    <button type="button" class="chooseQ-btn" id="track-release">Track Release Dates</button>
+                    <button type="button" class="chooseQ-btn" id="track-length">Track Lengths</button>
+                    <button type="button" class="chooseQ-btn" id="album-count">Album Count</button>
+                    <button type="button" class="chooseQ-btn" id="album-tracks">Album Track Count</button>
+                    <button type="button" class="chooseQ-btn" id="album-release">Album Release Dates</button>
+                </div>
+
+            </div>
+
+            <div class="popup-center">
+                <div class="icon">
+                    <header id="fire">
+                        🔥
+                    </header>
+                </div>
+                <div class="popup-title">
+                    <header id="popup-title">
+                        []
+                    </header>
+
+                </div>
+                <div class="description">
+                    <header id="score">
+                    </header>
+                </div>
+                <div class="dismiss-btn">
+                    <button id="dismiss-popup-btn">
+                        []
+                    </button>
+                </div>
+            </div>
+
+            <div class="reset-page">
+                <header class="prompts" id="reset-prompt">
+                    <h3>Click Reset to choose another artist and/or game mode or hit play again</h3>
+                </header>
+                <button type="button" class="hot-streak-btn" id="reset-btn">Reset</button>
+                <button type="button" class="hot-streak-btn" id="play-again-btn">Play Again</button>
             </div>
         </div>
-        
-        <div class="question">
-            <header class="prompts" id="hot-streak-q">
-                <h3>[]</h3>
-            </header>
-        </div>
-        
-        <div class="qbox">
-            <div class="questions">
-                <header id="q1">
-                    <h3>[] </h3>
-                </header>
-
-                <header id="q2">
-                    <h3>[] </h3>
-                </header>
-
-                <header id="q3">
-                    <h3>[] </h3>
-                </header>
-
-                <header id="q4">
-                    <h3>[] </h3>
-                </header>
-            </div>
-
-            <ul class="ks-cboxtags">
-                <li><input type="checkbox" id="checkbox1" value="answer1"><label for="checkbox1" id="label1">[]</label>
-                </li>
-                <li><input type="checkbox" id="checkbox2" value="answer2"><label for="checkbox2" id="label2">[]</label>
-                </li>
-                <li><input type="checkbox" id="checkbox3" value="answer3"><label for="checkbox3" id="label3">[]</label>
-                </li>
-                <li><input type="checkbox" id="checkbox4" value="answer4"><label for="checkbox4" id="label4">[]</label>
-                </li>
-            </ul>
-
-            <div class="mc-buttons">
-                <button type="button" class="mcbtn" id="Abtn">A</button>
-                <button type="button" class="mcbtn" id="Bbtn">B</button>
-                <button type="button" class="mcbtn" id="Cbtn">C</button>
-                <button type="button" class="mcbtn" id="Dbtn">D</button>
-                
-                <button type="input" class="submit-btn" id="submit">Submit</button>
-            </div>
-            
-        </div>
-
-        <div class="chooseQ-game">
-            <div class = "chooseQ-buttons">
-                <button type="button" class="chooseQ-btn" id="genres">Unrelated Genres</button>
-                <button type="button" class="chooseQ-btn" id="top-tracks">Top Tracks</button>
-                <button type="button" class="chooseQ-btn" id="track-release">Track Release Dates</button>
-                <button type="button" class="chooseQ-btn" id="track-length">Track Lengths</button>
-                <button type="button" class="chooseQ-btn" id="album-count">Album Count</button>
-                <button type="button" class="chooseQ-btn" id="album-tracks">Album Track Count</button>
-                <button type="button" class="chooseQ-btn" id="album-release">Album Release Dates</button>
-            </div>
-            
-        </div>  
-
-        <div class="popup center">
-            <div class="icon">
-                <header id="fire">
-                    🔥
-                </header>
-            </div>
-            <div class="popup-title">
-                <header id="popup-title">
-                    []
-                </header>
-
-            </div>
-            <div class="description">
-                <header id="score">
-                </header>
-            </div>
-            <div class="dismiss-btn">
-                <button id="dismiss-popup-btn">
-                    []
-                </button>
-            </div>
-        </div>
-
-        <div class="reset-page">
-            <header class="prompts" id="reset-prompt">
-                <h3>Click Reset to choose another artist and/or game mode or hit play again</h3>
-            </header>
-            <button type="button" class="hot-streak-btn" id="reset-btn">Reset</button>
-            <button type="button" class="hot-streak-btn" id="play-again-btn">Play Again</button>
-        </div>
-        
 
     </div>
 
