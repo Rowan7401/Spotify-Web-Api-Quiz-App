@@ -739,6 +739,10 @@ label {
 .qbox,
 .chooseQ-game,
 .popup-center,
+.popup-title,
+.icon,
+.description,
+.dismiss-btn,
 .reset-page {
   left: 50%;
   transform: translateX(-50%);

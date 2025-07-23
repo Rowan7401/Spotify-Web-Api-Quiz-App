@@ -380,7 +380,7 @@ const UIController = (function () {
                         score_board[0]++;
         
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✔️`
+                        document.getElementById("fire").innerHTML = `✅`
 
                     }
                     else {
@@ -399,7 +399,7 @@ const UIController = (function () {
                         score_board[0]++;
                         
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✔️`
+                        document.getElementById("fire").innerHTML = `✅`
 
                     }
                     else {
@@ -416,7 +416,7 @@ const UIController = (function () {
                         score_board[0]++;
                       
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✔️`
+                        document.getElementById("fire").innerHTML = `✅`
 
                     }
                     else {
@@ -573,7 +573,7 @@ const UIController = (function () {
                         && document.getElementById("checkbox2").checked == false && document.getElementById("checkbox4").checked == false) {
                         score_board[0]++;
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✔️`
+                        document.getElementById("fire").innerHTML = `✅`
 
                     }
                     else {
@@ -589,7 +589,7 @@ const UIController = (function () {
                         && document.getElementById("checkbox3").checked && document.getElementById("checkbox4").checked == false) {
                         score_board[0]++;
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✔️`
+                        document.getElementById("fire").innerHTML = `✅`
 
                     }
                     else {
@@ -605,7 +605,7 @@ const UIController = (function () {
                         && document.getElementById("checkbox3").checked && document.getElementById("checkbox4").checked) {
                         score_board[0]++;
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✔️`
+                        document.getElementById("fire").innerHTML = `✅`
 
                     }
                     else {
@@ -621,7 +621,7 @@ const UIController = (function () {
                         && document.getElementById("checkbox3").checked && document.getElementById("checkbox4").checked) {
                         score_board[0]++;
                         document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✔️`
+                        document.getElementById("fire").innerHTML = `✅`
 
                     }
                     else {
@@ -1593,7 +1593,7 @@ const APPController = (function (UICtrl, APICtrl) {
         if (correct) {
             console.log("Correct")
             document.getElementById("popup-title").innerHTML = `Correct!!`;
-            document.getElementById("fire").innerHTML = `✔️`
+            document.getElementById("fire").innerHTML = `✅`
             chooseQAnswerPopUp(score_board);
         }
         else {
@@ -1935,7 +1935,7 @@ const APPController = (function (UICtrl, APICtrl) {
         if (!checkboxQ) {
             if (correctAnswer) {
                 document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                document.getElementById("fire").innerHTML = `✔️`
+                document.getElementById("fire").innerHTML = `✅`
             }
             else {
                 document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
