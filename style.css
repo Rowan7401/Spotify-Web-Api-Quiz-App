@@ -194,28 +194,6 @@ h5 {
   cursor: pointer;
 }
 
-.popup-center .description {
-  color: rgb(255, 155, 4);
-  font-size: 1rem;
-  padding: 0.3rem;
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-}
-
-.popup-center .dismiss-btn button {
-  padding: 0.1rem 0.2rem;
-  width: 10rem;
-  background: rgb(244, 8, 8);
-  color: rgb(246, 235, 87);
-  border: 0.03rem solid rgb(72, 174, 229);
-  font-size: 1.2rem;
-  font-weight: 600;
-  outline: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  transition: all 300ms ease-in-out;
-  font-family: 'Times New Roman', Times, serif;
-}
-
 label {
   color: rgb(29, 185, 84);
   font-size: 1.2rem;
@@ -347,21 +325,20 @@ label {
 }
 
 .popup-center .icon {
-  margin: 0.05rem 0.02rem;
+  margin-right: 2rem;
   width: 2rem;
   height: 1.5rem;
   font-size: 3rem;
   color: #ed1515;
-  margin-right: 2.7rem;
-  position: relative;
-
+  position: absolute;
   border-radius: 50%;
 }
 
 .popup-center .popup-title {
   text-align: center;
-  position: relative;
-  margin-top: 2.5rem;
+  justify-self: center;
+  position: absolute;
+  margin-top: 3.8rem;
   font-size: 1.5rem;
   color: rgb(205 205 205);
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -372,11 +349,17 @@ label {
   color: rgb(255, 155, 4);
   font-size: 1rem;
   padding: 0.05rem;
+  position: absolute;
+  justify-self: center;
+  justify-content: center;
+  text-align: center;
+  margin-top: 5.8rem;
 }
 
 .popup-center .dismiss-btn button {
   padding: 0.2rem 0.5rem;
-  margin-top: 0.5rem;
+  width: 10rem;
+  margin-top: 8.5rem;
   background: rgb(0 0 0 / 76%);
   color: rgb(46 219 75);
   border: 0.1rem solid rgb(168 173 167);
@@ -385,6 +368,9 @@ label {
   outline: none;
   border-radius: 0.5rem;
   cursor: pointer;
+  position: relative;
+  left: 0;
+  right: 50%;
   transition: all 300ms ease-in-out;
 }
 
@@ -739,10 +725,6 @@ label {
 .qbox,
 .chooseQ-game,
 .popup-center,
-.popup-title,
-.icon,
-.description,
-.dismiss-btn,
 .reset-page {
   left: 50%;
   transform: translateX(-50%);
