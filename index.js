@@ -1,5 +1,3 @@
-const API_TOKEN_URL = "https://accounts.spotify.com/api/token";
-
 const GET_SEVERAL_ARTISTS =
       "https://api.spotify.com/v1/artists?"
     + "ids=7tYKF4w9nC0nq9CsPZTHyP%2C3yY2gUcIsjMr8hjo51PoJ8%2C6olE6TJLqED3rqDCT0FyPh%2C7rkW85dBwwrJtlHRDkJDAC%2C3qiHUAX7zY4Qnjx8TNUzVx%2C"  +
@@ -22,20 +20,16 @@ const GET_ALBUMS = "https://api.spotify.com/v1/artists/{id}/albums?include_group
 
 const APIController = (function () {
 
-    const clientId = '1d496acbb5d74fda83a986827c69c234';
-    const clientSecret = 'f677cbd0d9de483f9cd86e27a31d5e0b';
-
     // private methods
     const _getToken = async () => {
 
-        const result = await fetch(`${API_TOKEN_URL}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)
-            },
-            body: 'grant_type=client_credentials'
+        const result = await fetch('/api/token', {
+            method: 'POST'
         });
+
+        if (!result.ok) {
+            throw new Error('Unable to retrieve a Spotify access token.');
+        }
 
         const data = await result.json();
         return data.access_token;
@@ -2155,6 +2149,5 @@ const APPController = (function (UICtrl, APICtrl) {
 
 // will need to call a method to load the genres on page load
 APPController.init();
-
 
 
