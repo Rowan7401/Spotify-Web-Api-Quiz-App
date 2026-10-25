@@ -1292,8 +1292,7 @@ const APPController = (function (UICtrl, APICtrl) {
         document.getElementsByClassName("chooseGame")[0].classList.add("active");
 
         choose = document.getElementById('prompt-title');
-        choose.style.transform = "translate(-100%, -100%)";
-        choose.style.visibility = "hidden";
+        choose.style.display = "none";
 
     });
 
@@ -2155,6 +2154,5 @@ const APPController = (function (UICtrl, APICtrl) {
 
 // will need to call a method to load the genres on page load
 APPController.init();
-
 
 
