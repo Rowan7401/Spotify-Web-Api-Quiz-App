@@ -82,6 +82,16 @@ body {
   align-items: center;
 }
 
+#api-status {
+  text-align: center;
+  color: #fff;
+  margin: 0.5rem auto;
+}
+
+#api-status.error {
+  color: #ffb3b3;
+}
+
 .prompts {
   font-weight: bold;
   /* margin-left: 24rem; */

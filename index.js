@@ -26,9 +26,36 @@ const APIController = (function () {
     const clientSecret = 'f677cbd0d9de483f9cd86e27a31d5e0b';
 
     // private methods
+    const _request = async (url, options) => {
+        const response = await fetch(url, options);
+        const responseText = await response.text();
+        let data;
+
+        try {
+            data = responseText ? JSON.parse(responseText) : {};
+        } catch (error) {
+            if (!response.ok) {
+                throw new Error(`Spotify API request failed (${response.status} ${response.statusText}).`);
+            }
+            throw new Error('Spotify returned an invalid response.');
+        }
+
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+            throw new Error('Spotify returned an invalid response.');
+        }
+
+        if (!response.ok) {
+            const apiMessage = data.error?.message || data.error_description || data.error;
+            const detail = typeof apiMessage === 'string' ? `: ${apiMessage}` : '';
+            throw new Error(`Spotify API request failed (${response.status} ${response.statusText})${detail}.`);
+        }
+
+        return data;
+    }
+
     const _getToken = async () => {
 
-        const result = await fetch(`${API_TOKEN_URL}`, {
+        const data = await _request(API_TOKEN_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -37,45 +64,40 @@ const APIController = (function () {
             body: 'grant_type=client_credentials'
         });
 
-        const data = await result.json();
+        if (typeof data.access_token !== 'string' || !data.access_token) {
+            throw new Error('Spotify did not return an access token.');
+        }
         return data.access_token;
     }
 
     const _getArtists = async (token) => {
 
-        const result = await fetch(`${GET_SEVERAL_ARTISTS}`, {
+        const data = await _request(GET_SEVERAL_ARTISTS, {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + token }
         });
 
-        const data = await result.json();
-
+        if (!Array.isArray(data.artists)) {
+            throw new Error('Spotify returned an invalid artist list.');
+        }
         return data.artists;
     }
 
     const _getArtist = async (token, artistId) => {
         const url = GET_ARTIST.replace("{{artistId}}", artistId);
-        const result = await fetch(`${url}`, {
+        return _request(url, {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + token }
         });
-
-        const data = await result.json();
-
-        return data;
     }
 
     const _getArtistTopTracks = async (token, artistId) => {
         var url = GET_ARTIST_TOP_TRACKS;
         url = url.replace("{id}", artistId);
-        const result = await fetch(`${url}`, {
+        return _request(url, {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + token }
         });
-
-        const data = await result.json();
-
-        return data;
     }
 
     // const _getRelatedArtists = async (token, artistId) => {
@@ -94,14 +116,10 @@ const APIController = (function () {
     const _getTracks = async (token, tracksId) => {
         var url = GET_TRACKS;
         url = url.replace("{id}", tracksId);
-        const result = await fetch(`${url}`, {
+        return _request(url, {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + token }
         });
-
-        const data = await result.json();
-
-        return data;
     }
 
     // const _getTracksAnalysis = async (token, tracksId) => {
@@ -120,13 +138,14 @@ const APIController = (function () {
     const _getArtistAlbums = async (token, artistId) => {
         var url = GET_ALBUMS;
         url = url.replace("{id}", artistId);
-        const result = await fetch(`${url}`, {
+        const data = await _request(url, {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + token }
         });
 
-        const data = await result.json();
-
+        if (!Array.isArray(data.items)) {
+            throw new Error('Spotify returned an invalid album list.');
+        }
         return data;
     }
 
@@ -197,13 +216,10 @@ const UIController = (function () {
             var html = `
 
             <span class="artistHeader">${name}:</span>
-
-            <div class="form-label col-sm-12 px-0">
-                <img src="${img}" alt="artist_pic">
-            </div>
-            
-                
             `;
+            if (img) {
+                html += `<div class="form-label col-sm-12 px-0"><img src="${img}" alt="artist_pic"></div>`;
+            }
             document.querySelector(DOMElements.divArtistDetail).insertAdjacentHTML("beforeend", html)
         },
         createAlbumImage(img, name) {
@@ -211,14 +227,23 @@ const UIController = (function () {
             var html = `
 
             <span class="artistHeader">${name}:</span>
-
-            <div class="form-label col-sm-12 px-0">
-                <img src="${img}" alt="album_pic">
-            </div>
-            
-            
             `;
+            if (img) {
+                html += `<div class="form-label col-sm-12 px-0"><img src="${img}" alt="album_pic"></div>`;
+            }
             document.querySelector(DOMElements.divAlbumDetail).insertAdjacentHTML("beforeend", html)
+        },
+        showStatus(message, isError = false) {
+            const status = document.getElementById('api-status');
+            status.textContent = message;
+            status.classList.toggle('error', isError);
+        },
+        getImageUrl(images) {
+            if (!Array.isArray(images) || images.length === 0) {
+                return null;
+            }
+            const image = images.find(item => item && typeof item.url === 'string' && item.url);
+            return image ? image.url : null;
         },
         removeAlbumImage() {
             this.inputField().AlbumDetail.innerHTML = '';
@@ -1199,13 +1224,23 @@ const APPController = (function (UICtrl, APICtrl) {
         DBtn.style.display = 'none';
 
         //get the token
-        const token = await APICtrl.getToken();
-        //store the token onto the page
-        UICtrl.storeToken(token);
-        const artists = await APICtrl.getArtists(token);
-        //load artist select list
-        UICtrl.createDropdown();
-        artists.forEach(element => { UICtrl.createArtist(element.name, element.id) });
+        try {
+            const token = await APICtrl.getToken();
+            UICtrl.storeToken(token);
+            const artists = await APICtrl.getArtists(token);
+            if (artists.length === 0) {
+                throw new Error('Spotify did not return any artists.');
+            }
+            UICtrl.createDropdown();
+            artists.forEach(element => {
+                if (element && element.name && element.id) {
+                    UICtrl.createArtist(element.name, element.id);
+                }
+            });
+            UICtrl.showStatus('');
+        } catch (error) {
+            UICtrl.showStatus(`Unable to load Spotify artists. ${error.message}`, true);
+        }
 
     }
 
@@ -1251,50 +1286,75 @@ const APPController = (function (UICtrl, APICtrl) {
     var album_names = [];
     var randomAlbumIndex;
     DOMInputs.artist.addEventListener('change', async () => {
-        //store token to reduce calls on API for token
-        const token = UICtrl.getStoredToken().token;
-        //get the artist select field
-        var artistSelect = UICtrl.inputField().artist;
-        //get artist id
-        var artistId = artistSelect.value;
-        artistSelected = true;
-        //get artist stats based on artist selected
-        artist = await APICtrl.getArtist(token, artistId);
-        artistTopTracks = await APICtrl.getArtistTopTracks(token, artistId);
-        // relatedArtists = await APICtrl.getRelatedArtists(token, artistId);
-
-        var top_tracks = [artistTopTracks.tracks[0].id, artistTopTracks.tracks[1].id, artistTopTracks.tracks[2].id,
-        artistTopTracks.tracks[3].id, artistTopTracks.tracks[4].id, artistTopTracks.tracks[5].id,
-        artistTopTracks.tracks[6].id, artistTopTracks.tracks[7].id, artistTopTracks.tracks[8].id, artistTopTracks.tracks[9].id];
-
-        var tracksId = `${top_tracks[0]}`;
-        for (var i = 1; i < 10; i++) {
-            tracksId += "%2C" + top_tracks[i];
-        }
-
-        artistTopTen = await APICtrl.getTracks(token, tracksId);
-        // artistTopTenAnalysis = await APICtrl.getTracksAnalysis(token, tracksId);
-
-        artistAlbums = await APICtrl.getArtistAlbums(token, artistId);
-        for (var i = 0; i < artistAlbums.items.length; i++) {
-            if (!album_names.includes(artistAlbums.items[i].name)) {
-                album_names.push(artistAlbums.items[i].name);
-                albums.push(artistAlbums.items[i]);
+        artistSelected = false;
+        UICtrl.showStatus('Loading artist details...');
+        try {
+            const token = UICtrl.getStoredToken().token;
+            const artistId = UICtrl.inputField().artist.value;
+            const selectedArtist = await APICtrl.getArtist(token, artistId);
+            const selectedArtistTopTracks = await APICtrl.getArtistTopTracks(token, artistId);
+            if (!selectedArtist || typeof selectedArtist !== 'object'
+                || !selectedArtistTopTracks || typeof selectedArtistTopTracks !== 'object') {
+                throw new Error('Spotify returned incomplete artist details. Please choose another artist.');
             }
+            const topTracks = Array.isArray(selectedArtistTopTracks.tracks)
+                ? selectedArtistTopTracks.tracks.filter(track => track && track.id && track.name)
+                : [];
+
+            if (!selectedArtist.name || !Array.isArray(selectedArtist.genres) || selectedArtist.genres.length === 0
+                || !Number.isFinite(selectedArtist.popularity) || !Number.isFinite(selectedArtist.followers?.total)) {
+                throw new Error('Spotify returned incomplete artist details. Please choose another artist.');
+            }
+            if (topTracks.length < 10) {
+                throw new Error('Spotify returned fewer than 10 usable top tracks for this artist. Please choose another artist.');
+            }
+
+            const tracksId = topTracks.slice(0, 10).map(track => track.id).join('%2C');
+            const selectedArtistTopTen = await APICtrl.getTracks(token, tracksId);
+            if (!selectedArtistTopTen || typeof selectedArtistTopTen !== 'object') {
+                throw new Error('Spotify returned incomplete track details for this artist. Please choose another artist.');
+            }
+            const tracks = Array.isArray(selectedArtistTopTen.tracks)
+                ? selectedArtistTopTen.tracks.filter(track => track && track.name && track.album && track.album.release_date
+                    && typeof track.album.release_date === 'string'
+                    && Number.isFinite(track.duration_ms) && Number.isFinite(track.popularity))
+                : [];
+            if (tracks.length < 10) {
+                throw new Error('Spotify returned incomplete track details for this artist. Please choose another artist.');
+            }
+
+            let selectedArtistAlbums = { items: [], total: 0 };
+            let albumWarning = '';
+            try {
+                selectedArtistAlbums = await APICtrl.getArtistAlbums(token, artistId);
+            } catch (error) {
+                albumWarning = `Album data is unavailable. ${error.message}`;
+            }
+            const selectedAlbums = selectedArtistAlbums.items.filter(album => album && album.name
+                && typeof album.release_date === 'string' && Number.isFinite(album.total_tracks));
+
+            artist = selectedArtist;
+            artistTopTracks = { tracks: topTracks };
+            artistTopTen = { tracks };
+            artistAlbums = { ...selectedArtistAlbums, items: selectedAlbums };
+            albums = selectedAlbums;
+            album_names = selectedAlbums.map(album => album.name);
+
+            var imageUrl = UICtrl.getImageUrl(artist.images);
+            UICtrl.createArtistImage(imageUrl, artist.name);
+
+            document.getElementsByClassName("dropdown")[0].classList.remove("active");
+            document.getElementsByClassName("artist-detail")[0].classList.add("active");
+            document.getElementsByClassName("chooseGame")[0].classList.add("active");
+
+            choose = document.getElementById('prompt-title');
+            choose.style.transform = "translate(-100%, -100%)";
+            choose.style.visibility = "hidden";
+            artistSelected = true;
+            UICtrl.showStatus(albumWarning, Boolean(albumWarning));
+        } catch (error) {
+            UICtrl.showStatus(`Unable to load this artist. ${error.message}`, true);
         }
-
-        // load the artist details
-        var imageIndex = artist.images.length;
-        UICtrl.createArtistImage(artist.images[imageIndex - 2].url, artist.name);
-
-        document.getElementsByClassName("dropdown")[0].classList.remove("active");
-        document.getElementsByClassName("artist-detail")[0].classList.add("active");
-        document.getElementsByClassName("chooseGame")[0].classList.add("active");
-
-        choose = document.getElementById('prompt-title');
-        choose.style.transform = "translate(-100%, -100%)";
-        choose.style.visibility = "hidden";
-
     });
 
     function sleep(ms) {
@@ -1543,7 +1603,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
         if (albums.length != 0) {
             randomAlbumIndex = Math.floor(Math.random() * albums.length);
-            UICtrl.createAlbumImage(albums[randomAlbumIndex].images[1].url, albums[randomAlbumIndex].name);
+            UICtrl.createAlbumImage(UICtrl.getImageUrl(albums[randomAlbumIndex].images), albums[randomAlbumIndex].name);
         }
 
         console.log("beforoe timeout")
@@ -1611,7 +1671,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
         if (albums.length != 0) {
             randomAlbumIndex = Math.floor(Math.random() * albums.length);
-            UICtrl.createAlbumImage(albums[randomAlbumIndex].images[1].url, albums[randomAlbumIndex].name);
+            UICtrl.createAlbumImage(UICtrl.getImageUrl(albums[randomAlbumIndex].images), albums[randomAlbumIndex].name);
         }
 
         if (sel_question == 0) {
@@ -1774,7 +1834,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
         if (albums.length != 0) {
             randomAlbumIndex = Math.floor(Math.random() * albums.length);
-            UICtrl.createAlbumImage(albums[randomAlbumIndex].images[1].url, albums[randomAlbumIndex].name);
+            UICtrl.createAlbumImage(UICtrl.getImageUrl(albums[randomAlbumIndex].images), albums[randomAlbumIndex].name);
         }
 
         if (sel_question == 0) {
@@ -2155,6 +2215,3 @@ const APPController = (function (UICtrl, APICtrl) {
 
 // will need to call a method to load the genres on page load
 APPController.init();
-
-
-
