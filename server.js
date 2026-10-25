@@ -1,6 +1,6 @@
-const axios = require('axios');
 const express = require('express');
 const path = require('path');
+const getSpotifyAccessToken = require('./spotify-auth');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -13,19 +13,8 @@ app.post('/api/token', async (request, response) => {
     }
 
     try {
-        const spotifyResponse = await axios.post(
-            'https://accounts.spotify.com/api/token',
-            new URLSearchParams({ grant_type: 'client_credentials' }).toString(),
-            {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    Authorization: `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString('base64')}`
-                }
-            }
-        );
-
         response.set('Cache-Control', 'no-store').json({
-            access_token: spotifyResponse.data.access_token
+            access_token: await getSpotifyAccessToken(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
         });
     } catch (error) {
         console.error('Spotify token request failed:', error.response?.status || error.message);

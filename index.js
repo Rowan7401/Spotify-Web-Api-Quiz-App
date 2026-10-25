@@ -19,11 +19,12 @@ const GET_TRACKS = "https://api.spotify.com/v1/tracks?market=US&ids={id}";
 const GET_ALBUMS = "https://api.spotify.com/v1/artists/{id}/albums?include_groups=album&market=US&limit=30&offset=5";
 
 const APIController = (function () {
+    const tokenEndpoint = document.querySelector('meta[name="spotify-token-endpoint"]').content;
 
     // private methods
     const _getToken = async () => {
 
-        const result = await fetch('/api/token', {
+        const result = await fetch(tokenEndpoint, {
             method: 'POST'
         });
 
@@ -2149,5 +2150,4 @@ const APPController = (function (UICtrl, APICtrl) {
 
 // will need to call a method to load the genres on page load
 APPController.init();
-
 
