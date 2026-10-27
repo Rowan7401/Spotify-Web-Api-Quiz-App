@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const getSpotifyAccessToken = require('./spotify-auth');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -13,11 +12,12 @@ app.post('/api/token', async (request, response) => {
     }
 
     try {
+        const { default: getSpotifyAccessToken } = await import('./spotify-auth.mjs');
         response.set('Cache-Control', 'no-store').json({
             access_token: await getSpotifyAccessToken(SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET)
         });
     } catch (error) {
-        console.error('Spotify token request failed:', error.response?.status || error.message);
+        console.error('Spotify token request failed:', error.message);
         response.status(502).json({ error: 'Unable to retrieve a Spotify access token.' });
     }
 });
