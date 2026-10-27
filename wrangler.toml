@@ -1,0 +1,6 @@
+name = "spotistatify-token"
+main = "cloudflare/worker.mjs"
+compatibility_date = "2026-10-26"
+
+[vars]
+GITHUB_PAGES_ORIGIN = "https://rowan7401.github.io"
