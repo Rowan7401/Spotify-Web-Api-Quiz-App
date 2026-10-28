@@ -82,6 +82,16 @@ body {
   align-items: center;
 }
 
+#api-status {
+  text-align: center;
+  color: #fff;
+  margin: 0.5rem auto;
+}
+
+#api-status.error {
+  color: #ffb3b3;
+}
+
 .prompts {
   font-weight: bold;
   /* margin-left: 24rem; */
@@ -508,7 +518,18 @@ label {
   z-index: 101;
 }
 
+#artist-detail img,
+#album-detail img {
+  max-width: 50vw;
+  height: auto;
+}
+
 @media (max-width: 480px) {
+  #artist-detail img,
+  #album-detail img {
+    max-width: 95vw;
+  }
+
   .landing-header {
     padding: 1rem 0.1rem 0.3rem 0.1rem;
     margin-top: 0;
