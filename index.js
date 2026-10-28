@@ -19,7 +19,9 @@ const GET_TRACKS = "https://api.spotify.com/v1/tracks?market=US&ids={id}";
 const GET_ALBUMS = "https://api.spotify.com/v1/artists/{id}/albums?include_groups=album&market=US&limit=30&offset=5";
 
 const APIController = (function () {
-    const tokenEndpoint = document.querySelector('meta[name="spotify-token-endpoint"]').content;
+    const workerTokenEndpoint = document.querySelector('meta[name="spotify-token-endpoint"]').content;
+    const isLocalDevelopment = ['localhost', '127.0.0.1', '::1'].includes(window.location.hostname);
+    const tokenEndpoint = isLocalDevelopment ? '/api/token' : workerTokenEndpoint;
 
     // private methods
     const _getToken = async () => {
