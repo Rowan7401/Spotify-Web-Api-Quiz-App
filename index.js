@@ -1661,9 +1661,6 @@ const APPController = (function (UICtrl, APICtrl) {
             UICtrl.createAlbumImage(UICtrl.getImageUrl(albums[randomAlbumIndex].images), albums[randomAlbumIndex].name);
         }
 
-        console.log("beforoe timeout")
-        console.log(qType)
-
     }
 
     function setQuestionBoxType(qType, AClick, BClick, CClick, DClick) {
