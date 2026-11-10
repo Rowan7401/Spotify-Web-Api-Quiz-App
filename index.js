@@ -181,6 +181,31 @@ const UIController = (function () {
         divAlbumDetail: '#album-detail',
         divArtistDetail: '#artist-detail'
     }
+    const ANSWER_ORDERS = [
+        [0, 1, 2, 3],
+        [1, 0, 3, 2],
+        [2, 1, 0, 3],
+        [1, 2, 3, 0]
+    ];
+
+    function appendImageBlock(containerSelector, img, name, alt) {
+        const container = document.querySelector(containerSelector);
+        const heading = document.createElement('span');
+        heading.className = 'artistHeader';
+        heading.textContent = `${name}:`;
+        container.append(heading);
+
+        if (typeof img === 'string' && img.startsWith('https://')) {
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'form-label col-sm-12 px-0';
+
+            const image = document.createElement('img');
+            image.src = img;
+            image.alt = alt;
+            imageContainer.append(image);
+            container.append(imageContainer);
+        }
+    }
 
     //public methods
     return {
@@ -197,52 +222,61 @@ const UIController = (function () {
 
         // need methods to create select list option
         createDropdown(text, value) {
-            const html = `<option value ="${null}">Select an artist from the dropdown...`;
-            return document.querySelector(DOMElements.selectArtist).insertAdjacentHTML('beforeend', html);
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'Select an artist from the dropdown...';
+            return document.querySelector(DOMElements.selectArtist).append(option);
         },
         createArtist(text, value) {
-            const html = `<option value ="${value}">${text}`;
-            return document.querySelector(DOMElements.selectArtist).insertAdjacentHTML('beforeend', html);
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = text;
+            return document.querySelector(DOMElements.selectArtist).append(option);
         },
         createArtistImage(img, name) {
-
-            var html = `
-
-            <span class="artistHeader">${name}:</span>
-            `;
-            if (img) {
-                html += `<div class="form-label col-sm-12 px-0"><img src="${img}" alt="artist_pic"></div>`;
-            }
-            document.querySelector(DOMElements.divArtistDetail).insertAdjacentHTML("beforeend", html)
+            appendImageBlock(DOMElements.divArtistDetail, img, name, `${name} artist image`);
         },
         createAlbumImage(img, name) {
-
-            var html = `
-
-            <span class="artistHeader">${name}:</span>
-            `;
-            if (img) {
-                html += `<div class="form-label col-sm-12 px-0"><img src="${img}" alt="album_pic"></div>`;
-            }
-            document.querySelector(DOMElements.divAlbumDetail).insertAdjacentHTML("beforeend", html)
+            appendImageBlock(DOMElements.divAlbumDetail, img, name, `${name} album image`);
         },
         showStatus(message, isError = false) {
             const status = document.getElementById('api-status');
             status.textContent = message;
             status.classList.toggle('error', isError);
         },
+        setQuestionText(text) {
+            document.getElementById('hot-streak-q').textContent = text;
+        },
+        setMultipleChoiceChoices(choices) {
+            ['q1', 'q2', 'q3', 'q4'].forEach((id, index) => {
+                document.getElementById(id).textContent = choices[index] ?? '';
+            });
+        },
+        setCheckboxChoices(choices) {
+            ['label1', 'label2', 'label3', 'label4'].forEach((id, index) => {
+                document.getElementById(id).textContent = choices[index] ?? '';
+            });
+        },
+        formatMultipleChoiceAnswers(answers, correctSpot) {
+            return ANSWER_ORDERS[correctSpot].map((answerIndex, index) =>
+                `${String.fromCharCode(65 + index)}: ${answers[answerIndex]}`);
+        },
+        appendScore(text) {
+            const score = document.getElementById('score');
+            score.textContent += text;
+        },
         getImageUrl(images) {
             if (!Array.isArray(images) || images.length === 0) {
                 return null;
             }
-            const image = images.find(item => item && typeof item.url === 'string' && item.url);
+            const image = images.find(item => item && typeof item.url === 'string'
+                && item.url.startsWith('https://'));
             return image ? image.url : null;
         },
         showMissingData(dataName) {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
             document.getElementsByClassName("artist-detail")[0].classList.add("active");
-            document.getElementById("hot-streak-q").textContent =
-                `Sorry, Spotify does not have enough ${dataName} data for this artist to create this question. Skipping it.`;
+            this.setQuestionText(`Sorry, Spotify does not have enough ${dataName} data for this artist to create this question. Skipping it.`);
 
             for (let i = 1; i <= 4; i++) {
                 document.getElementById(`q${i}`).textContent = '';
@@ -259,7 +293,7 @@ const UIController = (function () {
             return false;
         },
         removeAlbumImage() {
-            this.inputField().AlbumDetail.innerHTML = '';
+            this.inputField().AlbumDetail.textContent = '';
         },
         popularity(artist, mc_spots) {
             if (!Number.isFinite(artist?.popularity)) {
@@ -268,7 +302,7 @@ const UIController = (function () {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
             document.getElementsByClassName("artist-detail")[0].classList.add("active");
 
-            document.getElementById("hot-streak-q").innerHTML = `What does Spotify rate ${artist.name}'s popularity? (100 = most popular)`;
+            this.setQuestionText(`What does Spotify rate ${artist.name}'s popularity? (100 = most popular)`);
 
             var real_ranking = artist.popularity;
 
@@ -288,26 +322,12 @@ const UIController = (function () {
 
             var answers = [real_ranking, fake_rank1, fake_rank2, fake_rank3];
 
-            if (mc_spots == 0) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
-            }
-            else if (mc_spots == 1) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 1]];
-            }
-            else if (mc_spots == 2) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots - 2], "D: " + answers[mc_spots + 1]];
-            }
-            else {
-                var mc = ["A: " + answers[mc_spots - 2], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots], "D: " + answers[mc_spots - 3]];
-            }
+            var mc = this.formatMultipleChoiceAnswers(answers, mc_spots);
 
 
-            q1.innerHTML = `${mc[0]}`;
-            q2.innerHTML = `${mc[1]}`;
-            q3.innerHTML = `${mc[2]}`;
-            q4.innerHTML = `${mc[3]}`;
+            this.setMultipleChoiceChoices(mc);
 
-            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
+            UIController.appendScore(`Answer: ${answers[0]}`);
 
         },
         followers(artist, mc_spots) {
@@ -317,7 +337,7 @@ const UIController = (function () {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
             document.getElementsByClassName("artist-detail")[0].classList.add("active");
 
-            document.getElementById("hot-streak-q").innerHTML = `How many followers on Spotify does ${artist.name} have?`;
+            this.setQuestionText(`How many followers on Spotify does ${artist.name} have?`);
 
             var random_nums = [];
             var n = 3;
@@ -342,26 +362,12 @@ const UIController = (function () {
 
             var answers = [real_followers, fake_followers1, fake_followers2, fake_followers3];
 
-            if (mc_spots == 0) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
-            }
-            else if (mc_spots == 1) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 1]];
-            }
-            else if (mc_spots == 2) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots - 2], "D: " + answers[mc_spots + 1]];
-            }
-            else {
-                var mc = ["A: " + answers[mc_spots - 2], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots], "D: " + answers[mc_spots - 3]];
-            }
+            var mc = this.formatMultipleChoiceAnswers(answers, mc_spots);
 
 
-            q1.innerHTML = `${mc[0]}`;
-            q2.innerHTML = `${mc[1]}`;
-            q3.innerHTML = `${mc[2]}`;
-            q4.innerHTML = `${mc[3]}`;
+            this.setMultipleChoiceChoices(mc);
 
-            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
+            UIController.appendScore(`Answer: ${answers[0]}`);
 
         },
         genres(artist, score_board) {
@@ -375,7 +381,7 @@ const UIController = (function () {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
             document.getElementsByClassName("artist-detail")[0].classList.add("active");
 
-            document.getElementById("hot-streak-q").innerHTML = `What genre(s) does Spotify not label ${artist.name} with?`;
+            this.setQuestionText(`What genre(s) does Spotify not label ${artist.name} with?`);
 
             document.getElementById("checkbox1").parentNode.style.display = 'unset';
             document.getElementById("checkbox2").parentNode.style.display = 'unset';
@@ -415,10 +421,7 @@ const UIController = (function () {
 
             var mc = ["A: " + genre1, "B: " + genre2, "C: " + genre3, "D: " + genre4];
 
-            document.getElementById('label1').innerHTML = `${mc[0]}`;
-            document.getElementById('label2').innerHTML = `${mc[1]}`;
-            document.getElementById('label3').innerHTML = `${mc[2]}`;
-            document.getElementById('label4').innerHTML = `${mc[3]}`;
+            this.setCheckboxChoices(mc);
 
             submitButton.addEventListener("click", submitAnswer);
             function submitAnswer(event) {
@@ -430,17 +433,17 @@ const UIController = (function () {
                         && document.getElementById("checkbox1").checked == false) {
                         score_board[0]++;
         
-                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✅`
+                        document.getElementById("popup-title").textContent = `Correct! Good job!`;
+                        document.getElementById("fire").textContent = `✅`
 
                     }
                     else {
                         score_board[1]++;
-                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
-                        document.getElementById("fire").innerHTML = `❌`
+                        document.getElementById("popup-title").textContent = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").textContent = `❌`
 
                     }
-                    document.getElementById("score").innerHTML += `Answer: ${mc[1]}, ${mc[2]}, ${mc[3]}`;
+                    UIController.appendScore(`Answer: ${mc[1]}, ${mc[2]}, ${mc[3]}`);
                 }
                 else if (real_genres.length == 2) {
                     if (document.getElementById("checkbox3").checked
@@ -449,34 +452,34 @@ const UIController = (function () {
                         && document.getElementById("checkbox2").checked == false) {
                         score_board[0]++;
                         
-                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✅`
+                        document.getElementById("popup-title").textContent = `Correct! Good job!`;
+                        document.getElementById("fire").textContent = `✅`
 
                     }
                     else {
                         score_board[1]++;
-                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
-                        document.getElementById("fire").innerHTML = `❌`
+                        document.getElementById("popup-title").textContent = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").textContent = `❌`
 
                     }
-                    document.getElementById("score").innerHTML += `Answer: ${mc[2]}, ${mc[3]}`;
+                    UIController.appendScore(`Answer: ${mc[2]}, ${mc[3]}`);
                 }
                 else {
                     if (document.getElementById("checkbox4").checked && document.getElementById("checkbox1").checked == false
                         && document.getElementById("checkbox2").checked == false && document.getElementById("checkbox3").checked == false) {
                         score_board[0]++;
                       
-                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✅`
+                        document.getElementById("popup-title").textContent = `Correct! Good job!`;
+                        document.getElementById("fire").textContent = `✅`
 
                     }
                     else {
                         score_board[1]++;
-                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
-                        document.getElementById("fire").innerHTML = `❌`
+                        document.getElementById("popup-title").textContent = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").textContent = `❌`
 
                     }
-                    document.getElementById("score").innerHTML += `Answer: ${mc[3]}`;
+                    UIController.appendScore(`Answer: ${mc[3]}`);
                 }
                 submitButton.removeEventListener("click", submitAnswer);
                 document.getElementById("checkbox1").parentNode.style.display = 'none';
@@ -496,7 +499,7 @@ const UIController = (function () {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
             document.getElementsByClassName("artist-detail")[0].classList.add("active");
 
-            document.getElementById("hot-streak-q").innerHTML = `What are ${artist.name}'s hottest 3 tracks currently?`;
+            this.setQuestionText(`What are ${artist.name}'s hottest 3 tracks currently?`);
 
             var top_tracks = [artistTopTracks.tracks[0].name, artistTopTracks.tracks[1].name, artistTopTracks.tracks[2].name,
             artistTopTracks.tracks[3].name, artistTopTracks.tracks[4].name, artistTopTracks.tracks[5].name, artistTopTracks.tracks[6].name,
@@ -524,34 +527,20 @@ const UIController = (function () {
 
             var answers = [top_three, fake_three1, fake_three2, fake_three3];
 
-            if (mc_spots == 0) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
-            }
-            else if (mc_spots == 1) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 1]];
-            }
-            else if (mc_spots == 2) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots - 2], "D: " + answers[mc_spots + 1]];
-            }
-            else {
-                var mc = ["A: " + answers[mc_spots - 2], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots], "D: " + answers[mc_spots - 3]];
-            }
+            var mc = this.formatMultipleChoiceAnswers(answers, mc_spots);
 
 
-            q1.innerHTML = `${mc[0]}`;
-            q2.innerHTML = `${mc[1]}`;
-            q3.innerHTML = `${mc[2]}`;
-            q4.innerHTML = `${mc[3]}`;
+            this.setMultipleChoiceChoices(mc);
 
-            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
+            UIController.appendScore(`Answer: ${answers[0]}`);
 
         },
         related(artist, relatedArtists, score_board, mc_spots) {
             document.getElementsByClassName("album-detail")[0].classList.remove("active");
             document.getElementsByClassName("artist-detail")[0].classList.add("active");
 
-            document.getElementById("hot-streak-q").innerHTML = `Which of these names does Spotify designate as ${artist.name}'s
-             "related" artists?`;
+            this.setQuestionText(`Which of these names does Spotify designate as ${artist.name}'s
+             "related" artists?`);
 
             document.getElementById("checkbox1").parentNode.style.display = 'unset';
             document.getElementById("checkbox2").parentNode.style.display = 'unset';
@@ -616,10 +605,7 @@ const UIController = (function () {
 
             var mc = ["A: " + artist1, "B: " + artist2, "C: " + artist3, "D: " + artist4];
 
-            document.getElementById('label1').innerHTML = `${mc[0]}`;
-            document.getElementById('label2').innerHTML = `${mc[1]}`;
-            document.getElementById('label3').innerHTML = `${mc[2]}`;
-            document.getElementById('label4').innerHTML = `${mc[3]}`;
+            this.setCheckboxChoices(mc);
 
             submit.addEventListener("click", submitAnswer);
             function submitAnswer(event) {
@@ -627,65 +613,65 @@ const UIController = (function () {
                     if (document.getElementById("checkbox1").checked == false && document.getElementById("checkbox3").checked
                         && document.getElementById("checkbox2").checked == false && document.getElementById("checkbox4").checked == false) {
                         score_board[0]++;
-                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✅`
+                        document.getElementById("popup-title").textContent = `Correct! Good job!`;
+                        document.getElementById("fire").textContent = `✅`
 
                     }
                     else {
                         score_board[1]++;
-                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
-                        document.getElementById("fire").innerHTML = `❌`
+                        document.getElementById("popup-title").textContent = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").textContent = `❌`
 
                     }
-                    document.getElementById("score").innerHTML += `Answer: ${mc[2]}`;
+                    UIController.appendScore(`Answer: ${mc[2]}`);
                 }
                 else if (mc_spots == 1) {
                     if (document.getElementById("checkbox1").checked && document.getElementById("checkbox2").checked == false
                         && document.getElementById("checkbox3").checked && document.getElementById("checkbox4").checked == false) {
                         score_board[0]++;
-                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✅`
+                        document.getElementById("popup-title").textContent = `Correct! Good job!`;
+                        document.getElementById("fire").textContent = `✅`
 
                     }
                     else {
                         score_board[1]++;
-                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
-                        document.getElementById("fire").innerHTML = `❌`
+                        document.getElementById("popup-title").textContent = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").textContent = `❌`
 
                     }
-                    document.getElementById("score").innerHTML += `Answer: ${mc[0]}, ${mc[2]}`;
+                    UIController.appendScore(`Answer: ${mc[0]}, ${mc[2]}`);
                 }
                 else if (mc_spots == 2) {
                     if (document.getElementById("checkbox1").checked && document.getElementById("checkbox2").checked == false
                         && document.getElementById("checkbox3").checked && document.getElementById("checkbox4").checked) {
                         score_board[0]++;
-                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✅`
+                        document.getElementById("popup-title").textContent = `Correct! Good job!`;
+                        document.getElementById("fire").textContent = `✅`
 
                     }
                     else {
                         score_board[1]++;
-                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
-                        document.getElementById("fire").innerHTML = `❌`
+                        document.getElementById("popup-title").textContent = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").textContent = `❌`
 
                     }
-                    document.getElementById("score").innerHTML += `Answer: ${mc[0]}, ${mc[2]}, ${mc[3]}`;
+                    UIController.appendScore(`Answer: ${mc[0]}, ${mc[2]}, ${mc[3]}`);
                 }
                 else {
                     if (document.getElementById("checkbox1").checked && document.getElementById("checkbox2").checked
                         && document.getElementById("checkbox3").checked && document.getElementById("checkbox4").checked) {
                         score_board[0]++;
-                        document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                        document.getElementById("fire").innerHTML = `✅`
+                        document.getElementById("popup-title").textContent = `Correct! Good job!`;
+                        document.getElementById("fire").textContent = `✅`
 
                     }
                     else {
                         score_board[1]++;
-                        document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
-                        document.getElementById("fire").innerHTML = `❌`
+                        document.getElementById("popup-title").textContent = `Incorrect... Get the next one!`;
+                        document.getElementById("fire").textContent = `❌`
 
                     }
-                    document.getElementById("score").innerHTML += `Answer: ${mc[1]}, ${mc[2]}, ${mc[3]}, ${mc[0]}`;
+                    UIController.appendScore(`Answer: ${mc[1]}, ${mc[2]}, ${mc[3]}, ${mc[0]}`);
                 }
                 submit.removeEventListener("click", submitAnswer);
                 document.getElementById("checkbox1").parentNode.style.display = 'none';
@@ -749,30 +735,16 @@ const UIController = (function () {
 
             var song_name = top_tracks[random_nums[0]].name;
 
-            document.getElementById("hot-streak-q").innerHTML = `What is the release date of "${song_name}"?`;
+            this.setQuestionText(`What is the release date of "${song_name}"?`);
 
             var answers = [real_track, fake_track1, fake_track2, fake_track3];
 
-            if (mc_spots == 0) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
-            }
-            else if (mc_spots == 1) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 1]];
-            }
-            else if (mc_spots == 2) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots - 2], "D: " + answers[mc_spots + 1]];
-            }
-            else {
-                var mc = ["A: " + answers[mc_spots - 2], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots], "D: " + answers[mc_spots - 3]];
-            }
+            var mc = this.formatMultipleChoiceAnswers(answers, mc_spots);
 
 
-            q1.innerHTML = `${mc[0]}`;
-            q2.innerHTML = `${mc[1]}`;
-            q3.innerHTML = `${mc[2]}`;
-            q4.innerHTML = `${mc[3]}`;
+            this.setMultipleChoiceChoices(mc);
 
-            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
+            UIController.appendScore(`Answer: ${answers[0]}`);
         },
         trackLength(artistTopTen, mc_spots) {
             const tracksWithDuration = Array.isArray(artistTopTen?.tracks)
@@ -826,31 +798,17 @@ const UIController = (function () {
 
             var song_name = top_tracks[random_nums[0]].name;
 
-            document.getElementById("hot-streak-q").innerHTML = `How long is "${song_name}"?`;
+            this.setQuestionText(`How long is "${song_name}"?`);
 
 
             var answers = [real_track, fake_track1, fake_track2, fake_track3];
 
-            if (mc_spots == 0) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
-            }
-            else if (mc_spots == 1) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 1]];
-            }
-            else if (mc_spots == 2) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots - 2], "D: " + answers[mc_spots + 1]];
-            }
-            else {
-                var mc = ["A: " + answers[mc_spots - 2], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots], "D: " + answers[mc_spots - 3]];
-            }
+            var mc = this.formatMultipleChoiceAnswers(answers, mc_spots);
 
 
-            q1.innerHTML = `${mc[0]}`;
-            q2.innerHTML = `${mc[1]}`;
-            q3.innerHTML = `${mc[2]}`;
-            q4.innerHTML = `${mc[3]}`;
+            this.setMultipleChoiceChoices(mc);
 
-            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
+            UIController.appendScore(`Answer: ${answers[0]}`);
 
         },
         trackAnalysis(artistTopTen, artistTopTenAnalysis, mc_spots) {
@@ -881,28 +839,28 @@ const UIController = (function () {
             var song_name = top_tracks[random_nums[0]].name;
 
             if (mc_spots == 0) {
-                document.getElementById("hot-streak-q").innerHTML = `What does Spotify rate the danceability of "${song_name}"? (0-1 scale)`;
+                this.setQuestionText(`What does Spotify rate the danceability of "${song_name}"? (0-1 scale)`);
                 real_track = top_tracks_analysis[random_nums[0]].danceability;
                 fake_track1 = top_tracks_analysis[random_nums[1]].danceability;
                 fake_track2 = top_tracks_analysis[random_nums[2]].danceability;
                 fake_track3 = top_tracks_analysis[random_nums[3]].danceability;
             }
             else if (mc_spots == 1) {
-                document.getElementById("hot-streak-q").innerHTML = `What does Spotify rate the acousticness of "${song_name}"? (0-1 scale)`;
+                this.setQuestionText(`What does Spotify rate the acousticness of "${song_name}"? (0-1 scale)`);
                 real_track = top_tracks_analysis[random_nums[0]].acousticness;
                 fake_track1 = top_tracks_analysis[random_nums[1]].acousticness;
                 fake_track2 = top_tracks_analysis[random_nums[2]].acousticness;
                 fake_track3 = top_tracks_analysis[random_nums[3]].acousticness;
             }
             else if (mc_spots == 2) {
-                document.getElementById("hot-streak-q").innerHTML = `What does Spotify rate the energy of "${song_name}"? (0-1 scale)`;
+                this.setQuestionText(`What does Spotify rate the energy of "${song_name}"? (0-1 scale)`);
                 real_track = top_tracks_analysis[random_nums[0]].energy;
                 fake_track1 = top_tracks_analysis[random_nums[1]].energy;
                 fake_track2 = top_tracks_analysis[random_nums[2]].energy;
                 fake_track3 = top_tracks_analysis[random_nums[3]].energy;
             }
             else {
-                document.getElementById("hot-streak-q").innerHTML = `What does Spotify rate the tempo of "${song_name}"? (bpm)`;
+                this.setQuestionText(`What does Spotify rate the tempo of "${song_name}"? (bpm)`);
                 real_track = top_tracks_analysis[random_nums[0]].tempo;
                 fake_track1 = top_tracks_analysis[random_nums[1]].tempo;
                 fake_track2 = top_tracks_analysis[random_nums[2]].tempo;
@@ -911,26 +869,12 @@ const UIController = (function () {
 
             var answers = [real_track, fake_track1, fake_track2, fake_track3];
 
-            if (mc_spots == 0) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
-            }
-            else if (mc_spots == 1) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 1]];
-            }
-            else if (mc_spots == 2) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots - 2], "D: " + answers[mc_spots + 1]];
-            }
-            else {
-                var mc = ["A: " + answers[mc_spots - 2], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots], "D: " + answers[mc_spots - 3]];
-            }
+            var mc = this.formatMultipleChoiceAnswers(answers, mc_spots);
 
 
-            q1.innerHTML = `${mc[0]}`;
-            q2.innerHTML = `${mc[1]}`;
-            q3.innerHTML = `${mc[2]}`;
-            q4.innerHTML = `${mc[3]}`;
+            this.setMultipleChoiceChoices(mc);
 
-            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
+            UIController.appendScore(`Answer: ${answers[0]}`);
 
         },
         trackPopularity(artistTopTen, mc_spots) {
@@ -961,30 +905,16 @@ const UIController = (function () {
 
             var song_name = top_tracks[rand].name;
 
-            document.getElementById("hot-streak-q").innerHTML = `What is the popularity of "${song_name}"? (100 = most popular)`;
+            this.setQuestionText(`What is the popularity of "${song_name}"? (100 = most popular)`);
 
             var answers = [real_track, fake_track1, fake_track2, fake_track3];
 
-            if (mc_spots == 0) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
-            }
-            else if (mc_spots == 1) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 1]];
-            }
-            else if (mc_spots == 2) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots - 2], "D: " + answers[mc_spots + 1]];
-            }
-            else {
-                var mc = ["A: " + answers[mc_spots - 2], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots], "D: " + answers[mc_spots - 3]];
-            }
+            var mc = this.formatMultipleChoiceAnswers(answers, mc_spots);
 
 
-            q1.innerHTML = `${mc[0]}`;
-            q2.innerHTML = `${mc[1]}`;
-            q3.innerHTML = `${mc[2]}`;
-            q4.innerHTML = `${mc[3]}`;
+            this.setMultipleChoiceChoices(mc);
 
-            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
+            UIController.appendScore(`Answer: ${answers[0]}`);
 
 
         },
@@ -1019,31 +949,17 @@ const UIController = (function () {
 
             var artist_name = artist.name;
 
-            document.getElementById("hot-streak-q").innerHTML = `How many official albums does ${artist_name} have under their name? 
-            (not updated recently..)`;
+            this.setQuestionText(`How many official albums does ${artist_name} have under their name?
+            (not updated recently..)`);
 
             var answers = [real_albums, fake_albums1, fake_albums2, fake_albums3];
 
-            if (mc_spots == 0) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
-            }
-            else if (mc_spots == 1) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 1]];
-            }
-            else if (mc_spots == 2) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots - 2], "D: " + answers[mc_spots + 1]];
-            }
-            else {
-                var mc = ["A: " + answers[mc_spots - 2], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots], "D: " + answers[mc_spots - 3]];
-            }
+            var mc = this.formatMultipleChoiceAnswers(answers, mc_spots);
 
 
-            q1.innerHTML = `${mc[0]}`;
-            q2.innerHTML = `${mc[1]}`;
-            q3.innerHTML = `${mc[2]}`;
-            q4.innerHTML = `${mc[3]}`;
+            this.setMultipleChoiceChoices(mc);
 
-            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
+            UIController.appendScore(`Answer: ${answers[0]}`);
 
         },
         albumTrackCount(albums, mc_spots, randomAlbumIndex) {
@@ -1071,31 +987,17 @@ const UIController = (function () {
             var fake_track_count2 = rands[1];
             var fake_track_count3 = rands[2];
 
-            document.getElementById("hot-streak-q").innerHTML = `How many tracks does "${album.name || 'this album'}" have?`;
+            this.setQuestionText(`How many tracks does "${album.name || 'this album'}" have?`);
 
 
             var answers = [real_track_count, fake_track_count1, fake_track_count2, fake_track_count3];
 
-            if (mc_spots == 0) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
-            }
-            else if (mc_spots == 1) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 1]];
-            }
-            else if (mc_spots == 2) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots - 2], "D: " + answers[mc_spots + 1]];
-            }
-            else {
-                var mc = ["A: " + answers[mc_spots - 2], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots], "D: " + answers[mc_spots - 3]];
-            }
+            var mc = this.formatMultipleChoiceAnswers(answers, mc_spots);
 
 
-            q1.innerHTML = `${mc[0]}`;
-            q2.innerHTML = `${mc[1]}`;
-            q3.innerHTML = `${mc[2]}`;
-            q4.innerHTML = `${mc[3]}`;
+            this.setMultipleChoiceChoices(mc);
 
-            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
+            UIController.appendScore(`Answer: ${answers[0]}`);
 
         },
         albumRelease(albums, mc_spots, randomAlbumIndex) {
@@ -1136,30 +1038,16 @@ const UIController = (function () {
             fake_album_rel3 = dateShift(fake_album_rel3);
 
 
-            document.getElementById("hot-streak-q").innerHTML = `When was "${releaseDateAlbum.name || 'this album'}" released?`;
+            this.setQuestionText(`When was "${releaseDateAlbum.name || 'this album'}" released?`);
 
             answers = [real_album_rel, fake_album_rel1, fake_album_rel2, fake_album_rel3];
 
-            if (mc_spots == 0) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots + 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 3]];
-            }
-            else if (mc_spots == 1) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots + 2], "D: " + answers[mc_spots + 1]];
-            }
-            else if (mc_spots == 2) {
-                var mc = ["A: " + answers[mc_spots], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots - 2], "D: " + answers[mc_spots + 1]];
-            }
-            else {
-                var mc = ["A: " + answers[mc_spots - 2], "B: " + answers[mc_spots - 1], "C: " + answers[mc_spots], "D: " + answers[mc_spots - 3]];
-            }
+            var mc = this.formatMultipleChoiceAnswers(answers, mc_spots);
 
 
-            q1.innerHTML = `${mc[0]}`;
-            q2.innerHTML = `${mc[1]}`;
-            q3.innerHTML = `${mc[2]}`;
-            q4.innerHTML = `${mc[3]}`;
+            this.setMultipleChoiceChoices(mc);
 
-            document.getElementById("score").innerHTML += `Answer: ${answers[0]}`;
+            UIController.appendScore(`Answer: ${answers[0]}`);
 
         },
         storeToken(value) {
@@ -1197,7 +1085,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
     } while (random_nums.length < n);
 
-    document.getElementById("prompt").innerHTML = `Choose your quiz game mode`;
+    document.getElementById("prompt").textContent = `Choose your quiz game mode`;
 
     // get artists on page load
     const loadArtist = async () => {
@@ -1279,7 +1167,7 @@ const APPController = (function (UICtrl, APICtrl) {
         document.getElementsByClassName("reset-page")[0].classList.remove("active");
         document.getElementsByClassName("question")[0].classList.add("active");
         UICtrl.removeAlbumImage();
-        document.getElementById("score").innerHTML = ``;
+        document.getElementById("score").textContent = ``;
 
         console.log(score_board)
         hotStreakQuestion();
@@ -1292,7 +1180,7 @@ const APPController = (function (UICtrl, APICtrl) {
 
         document.getElementsByClassName("reset-page")[0].classList.remove("active");
         document.getElementsByClassName("question")[0].classList.add("active");
-        document.getElementById("score").innerHTML = ``;
+        document.getElementById("score").textContent = ``;
         UICtrl.removeAlbumImage();
 
         console.log(score_board)
@@ -1695,27 +1583,27 @@ const APPController = (function (UICtrl, APICtrl) {
             DBtn.addEventListener("click", DClick);
 
             submit.style.display = "none";
-            document.getElementById("fire").innerHTML = `🔥`
+            document.getElementById("fire").textContent = `🔥`
         }
 
     }
 
     function checkChooseQAnswer(correct) {
         if (questionSkipped) {
-            document.getElementById("popup-title").innerHTML = `Question skipped`;
-            document.getElementById("fire").innerHTML = `ℹ️`;
+            document.getElementById("popup-title").textContent = `Question skipped`;
+            document.getElementById("fire").textContent = `ℹ️`;
             chooseQAnswerPopUp(score_board);
         }
         else if (correct) {
             console.log("Correct")
-            document.getElementById("popup-title").innerHTML = `Correct!!`;
-            document.getElementById("fire").innerHTML = `✅`
+            document.getElementById("popup-title").textContent = `Correct!!`;
+            document.getElementById("fire").textContent = `✅`
             chooseQAnswerPopUp(score_board);
         }
         else {
             console.log("Incorrect");
-            document.getElementById("popup-title").innerHTML = `Incorrect!!`;
-            document.getElementById("fire").innerHTML = `❌`
+            document.getElementById("popup-title").textContent = `Incorrect!!`;
+            document.getElementById("fire").textContent = `❌`
             chooseQAnswerPopUp(score_board);
         }
     }
@@ -1801,7 +1689,7 @@ const APPController = (function (UICtrl, APICtrl) {
             DBtn.addEventListener("click", DClick);
 
             submit.style.display = "none";
-            document.getElementById("fire").innerHTML = `🔥`
+            document.getElementById("fire").textContent = `🔥`
         }
 
 
@@ -2068,12 +1956,12 @@ const APPController = (function (UICtrl, APICtrl) {
         }
         if (!checkboxQ) {
             if (correctAnswer) {
-                document.getElementById("popup-title").innerHTML = `Correct! Good job!`;
-                document.getElementById("fire").innerHTML = `✅`
+                document.getElementById("popup-title").textContent = `Correct! Good job!`;
+                document.getElementById("fire").textContent = `✅`
             }
             else {
-                document.getElementById("popup-title").innerHTML = `Incorrect... Get the next one!`;
-                document.getElementById("fire").innerHTML = `❌`
+                document.getElementById("popup-title").textContent = `Incorrect... Get the next one!`;
+                document.getElementById("fire").textContent = `❌`
             }
 
         }  
@@ -2085,30 +1973,30 @@ const APPController = (function (UICtrl, APICtrl) {
     function hotStreakPopup() {
         document.getElementsByClassName("popup-center")[0].classList.add("active");
 
-        document.getElementById("score").innerHTML += ` Hot Streak of ${score_board[0]}!`;
+        UIController.appendScore(` Hot Streak of ${score_board[0]}!`);
 
         dismiss_btn = document.getElementById("dismiss-popup-btn");
         dismiss_btn.addEventListener("click", dismissPopup);
 
         if (score_board[1] != 0) {
-            document.getElementById("score").innerHTML = `Final Score: Hot Streak of ${score_board[0]}!`;
-            document.getElementById("dismiss-popup-btn").innerHTML = `Dismiss`;
+            document.getElementById("score").textContent = `Final Score: Hot Streak of ${score_board[0]}!`;
+            document.getElementById("dismiss-popup-btn").textContent = `Dismiss`;
             if (score_board[0] < 5) {
-                document.getElementById("popup-title").innerHTML = `🧊Game Over!🧊 Cold round...`;
+                document.getElementById("popup-title").textContent = `🧊Game Over!🧊 Cold round...`;
             }
             else {
-                document.getElementById("popup-title").innerHTML = `🔥Game Over!🔥 You were on fire!`;
+                document.getElementById("popup-title").textContent = `🔥Game Over!🔥 You were on fire!`;
             }
 
         }
         else {
-            document.getElementById("dismiss-popup-btn").innerHTML = `Next Question`;
-            document.getElementById("popup-title").innerHTML = questionSkipped ? `Question skipped` : `Correct!!`;
+            document.getElementById("dismiss-popup-btn").textContent = `Next Question`;
+            document.getElementById("popup-title").textContent = questionSkipped ? `Question skipped` : `Correct!!`;
         }
 
         function dismissPopup() {
             if (score_board[1] == 0) {
-                document.getElementById("score").innerHTML = ``;
+                document.getElementById("score").textContent = ``;
                 dismiss_btn.removeEventListener("click", dismissPopup);
                 document.getElementsByClassName("popup-center")[0].classList.remove("active");
                 UICtrl.removeAlbumImage();
@@ -2132,13 +2020,13 @@ const APPController = (function (UICtrl, APICtrl) {
 
         var totalQ = score_board[0] + score_board[1];
 
-        document.getElementById("score").innerHTML += ` Score: ${score_board[0]}/${totalQ} answered`;
+        UIController.appendScore(` Score: ${score_board[0]}/${totalQ} answered`);
 
         dismiss_btn = document.getElementById("dismiss-popup-btn");
         dismiss_btn.addEventListener("click", dismissPopup);
         if (questionSkipped) {
-            document.getElementById("popup-title").innerHTML = `Question skipped`;
-            document.getElementById("fire").innerHTML = `ℹ️`;
+            document.getElementById("popup-title").textContent = `Question skipped`;
+            document.getElementById("fire").textContent = `ℹ️`;
         }
 
         var percentageRaw = totalQ === 0 ? 0 : score_board[0] / totalQ;
@@ -2147,57 +2035,57 @@ const APPController = (function (UICtrl, APICtrl) {
         console.log(extraQuestions);
         if (!extraQuestions) {
             if (totalQ === 0) {
-                document.getElementById("popup-title").innerHTML = `No score: Spotify did not provide data for any questions.`;
+                document.getElementById("popup-title").textContent = `No score: Spotify did not provide data for any questions.`;
             }
             else if (percentageRaw >= 0.93) {
-                document.getElementById("popup-title").innerHTML = ` Grade: [A] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent = ` Grade: [A] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.90 && percentageRaw < 0.93) {
-                document.getElementById("popup-title").innerHTML = ` Grade: [A-] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent = ` Grade: [A-] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.87 && percentageRaw < 0.9) {
-                document.getElementById("popup-title").innerHTML = ` Grade: [B+] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent = ` Grade: [B+] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.84 && percentageRaw < 0.87) {
-                document.getElementById("popup-title").innerHTML = ` Grade: [B] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent = ` Grade: [B] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.8 && percentageRaw < 0.84) {
-                document.getElementById("popup-title").innerHTML = ` Grade: [B-] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent = ` Grade: [B-] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.77 && percentageRaw < 0.8) {
-                document.getElementById("popup-title").innerHTML = ` Grade: [C+] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent = ` Grade: [C+] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.74 && percentageRaw < 0.77) {
-                document.getElementById("popup-title").innerHTML = ` Grade: [C] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent = ` Grade: [C] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.7 && percentageRaw < 0.74) {
-                document.getElementById("popup-title").innerHTML = ` Grade: [C-] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent = ` Grade: [C-] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.67 && percentageRaw < 0.7) {
-                document.getElementById("popup-title").innerHTML = ` Grade: [D+] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent = ` Grade: [D+] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.64 && percentageRaw < 0.67) {
-                document.getElementById("popup-title").innerHTML = ` Grade: [D] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent = ` Grade: [D] Final score: ${percentage}%`;
             }
             else if (percentageRaw >= 0.6 && percentageRaw < 0.64) {
-                document.getElementById("popup-title").innerHTML = ` Grade: [D-] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent = ` Grade: [D-] Final score: ${percentage}%`;
             }
             else {
-                document.getElementById("popup-title").innerHTML = ` Grade: [F] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent = ` Grade: [F] Final score: ${percentage}%`;
             }
             if (questionSkipped && totalQ > 0) {
-                document.getElementById("popup-title").innerHTML += ` (question skipped)`;
+                document.getElementById("popup-title").textContent += ` (question skipped)`;
             }
-            document.getElementById("dismiss-popup-btn").innerHTML = `Dismiss`;
+            document.getElementById("dismiss-popup-btn").textContent = `Dismiss`;
 
         }
         else {
-            document.getElementById("dismiss-popup-btn").innerHTML = `Next Question`;
+            document.getElementById("dismiss-popup-btn").textContent = `Next Question`;
         }
 
         function dismissPopup() {
             if (extraQuestions) {
-                document.getElementById("score").innerHTML = ``;
+                document.getElementById("score").textContent = ``;
                 dismiss_btn.removeEventListener("click", dismissPopup);
                 document.getElementsByClassName("popup-center")[0].classList.remove("active");
                 UICtrl.removeAlbumImage();
@@ -2220,15 +2108,15 @@ const APPController = (function (UICtrl, APICtrl) {
     function chooseQAnswerPopUp() {
         document.getElementsByClassName("popup-center")[0].classList.add("active");
 
-        document.getElementById("score").innerHTML += ` Score ${score_board[0]} / ${score_board[1] + score_board[0]}!`;
+        UIController.appendScore(` Score ${score_board[0]} / ${score_board[1] + score_board[0]}!`);
 
         dismiss_btn = document.getElementById("dismiss-popup-btn");
         dismiss_btn.addEventListener("click", dismissPopup);
    
-        document.getElementById("dismiss-popup-btn").innerHTML = `Next Question`;
+        document.getElementById("dismiss-popup-btn").textContent = `Next Question`;
 
         function dismissPopup() {
-            document.getElementById("score").innerHTML = ``;
+            document.getElementById("score").textContent = ``;
             UICtrl.removeAlbumImage();
             dismiss_btn.removeEventListener("click", dismissPopup);
             document.getElementsByClassName("popup-center")[0].classList.remove("active");
