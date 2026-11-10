@@ -1,3 +1,5 @@
+'use strict';
+
 const GET_SEVERAL_ARTISTS =
       "https://api.spotify.com/v1/artists?"
     + "ids=7tYKF4w9nC0nq9CsPZTHyP%2C3yY2gUcIsjMr8hjo51PoJ8%2C6olE6TJLqED3rqDCT0FyPh%2C7rkW85dBwwrJtlHRDkJDAC%2C3qiHUAX7zY4Qnjx8TNUzVx%2C"  +
@@ -172,6 +174,13 @@ const APIController = (function () {
 
 
 const UIController = (function () {
+    const q1 = document.getElementById('q1');
+    const q2 = document.getElementById('q2');
+    const q3 = document.getElementById('q3');
+    const q4 = document.getElementById('q4');
+    const answerButtons = ['Abtn', 'Bbtn', 'Cbtn', 'Dbtn']
+        .map(id => document.getElementById(id));
+    const submit = document.getElementById('submit');
 
     //object to hold references to html selectors
     const DOMElements = {
@@ -285,7 +294,7 @@ const UIController = (function () {
                 checkbox.parentNode.style.display = 'none';
             }
             document.getElementById('submit').style.display = 'none';
-            [ABtn, BBtn, CBtn, DBtn].forEach(button => {
+            answerButtons.forEach(button => {
                 if (button) {
                     button.style.display = 'none';
                 }
@@ -697,6 +706,10 @@ const UIController = (function () {
             var top_tracks = tracksWithReleaseDates;
 
             var random_nums = [];
+            let real_track;
+            let fake_track1;
+            let fake_track2;
+            let fake_track3;
             var n = 4;
             do {
                 const randomNumber = Math.floor(Math.random() * top_tracks.length);
@@ -759,6 +772,10 @@ const UIController = (function () {
             var top_tracks = tracksWithDuration;
 
             var random_nums = [];
+            let real_track;
+            let fake_track1;
+            let fake_track2;
+            let fake_track3;
             var n = 4;
             do {
                 const randomNumber = Math.floor(Math.random() * top_tracks.length);
@@ -826,6 +843,10 @@ const UIController = (function () {
             artistTopTenAnalysis.audio_features[8], artistTopTenAnalysis.audio_features[9]];
 
             var random_nums = [];
+            let real_track;
+            let fake_track1;
+            let fake_track2;
+            let fake_track3;
             var n = 4;
             do {
                 const randomNumber = Math.floor(Math.random() * 10);
@@ -970,7 +991,7 @@ const UIController = (function () {
             document.getElementsByClassName("artist-detail")[0].classList.remove("active");
             document.getElementsByClassName("album-detail")[0].classList.add("active");
 
-            real_track_count = album.total_tracks;
+            const real_track_count = album.total_tracks;
 
             var rands = [];
             var x = 3;
@@ -1012,10 +1033,10 @@ const UIController = (function () {
 
             const releaseDateAlbum = albumsWithReleaseDates.find(album => album === albums[randomAlbumIndex])
                 || albumsWithReleaseDates[Math.floor(Math.random() * albumsWithReleaseDates.length)];
-            real_album_rel = releaseDateAlbum.release_date;
-            fake_album_rel1 = albumsWithReleaseDates[Math.floor(Math.random() * albumsWithReleaseDates.length)].release_date;
-            fake_album_rel2 = albumsWithReleaseDates[Math.floor(Math.random() * albumsWithReleaseDates.length)].release_date;
-            fake_album_rel3 = albumsWithReleaseDates[Math.floor(Math.random() * albumsWithReleaseDates.length)].release_date;
+            let real_album_rel = releaseDateAlbum.release_date;
+            let fake_album_rel1 = albumsWithReleaseDates[Math.floor(Math.random() * albumsWithReleaseDates.length)].release_date;
+            let fake_album_rel2 = albumsWithReleaseDates[Math.floor(Math.random() * albumsWithReleaseDates.length)].release_date;
+            let fake_album_rel3 = albumsWithReleaseDates[Math.floor(Math.random() * albumsWithReleaseDates.length)].release_date;
 
             function dateShift(date) {
                 var newDate;
@@ -1040,7 +1061,7 @@ const UIController = (function () {
 
             this.setQuestionText(`When was "${releaseDateAlbum.name || 'this album'}" released?`);
 
-            answers = [real_album_rel, fake_album_rel1, fake_album_rel2, fake_album_rel3];
+            const answers = [real_album_rel, fake_album_rel1, fake_album_rel2, fake_album_rel3];
 
             var mc = this.formatMultipleChoiceAnswers(answers, mc_spots);
 
@@ -1083,6 +1104,29 @@ const APPController = (function (UICtrl, APICtrl) {
     function getGrade(percentage) {
         return GRADE_THRESHOLDS.find(([threshold]) => percentage >= threshold)?.[1] ?? 'F';
     }
+    const q1 = document.getElementById('q1');
+    const q2 = document.getElementById('q2');
+    const q3 = document.getElementById('q3');
+    const q4 = document.getElementById('q4');
+    const genres = document.getElementById('genres');
+    const top_tracks = document.getElementById('top-tracks');
+    const track_release = document.getElementById('track-release');
+    const track_length = document.getElementById('track-length');
+    const album_count = document.getElementById('album-count');
+    const album_tracks = document.getElementById('album-tracks');
+    const album_release = document.getElementById('album-release');
+    const ABtn = document.getElementById('Abtn');
+    const BBtn = document.getElementById('Bbtn');
+    const CBtn = document.getElementById('Cbtn');
+    const DBtn = document.getElementById('Dbtn');
+    const submit = document.getElementById('submit');
+    const reset_btn = document.getElementById('reset-btn');
+    const choose = document.getElementById('prompt-title');
+    const dismiss_btn = document.getElementById('dismiss-popup-btn');
+    const play_again_btn = document.getElementById('play-again-btn');
+    const hsbtn = document.getElementById('hsbtn');
+    const testbtn = document.getElementById('testbtn');
+    const chbtn = document.getElementById('chbtn');
 
     var score_board = [0, 0];
     var artistSelected = false;
@@ -1110,22 +1154,10 @@ const APPController = (function (UICtrl, APICtrl) {
         document.getElementsByClassName("dropdown")[0].classList.add("active");
         document.getElementsByClassName("reset-page")[0].classList.remove("active");
 
-        q1 = document.getElementById('q1');
-        q2 = document.getElementById('q2');
-        q3 = document.getElementById('q3');
-        q4 = document.getElementById('q4');
         q1.style.display = "none";
         q2.style.display = "none";
         q3.style.display = "none";
         q4.style.display = "none";
-
-        genres = document.getElementById('genres');
-        top_tracks = document.getElementById('top-tracks');
-        track_release = document.getElementById('track-release');
-        track_length = document.getElementById('track-length');
-        album_count = document.getElementById('album-count');
-        album_tracks = document.getElementById('album-tracks');
-        album_release = document.getElementById('album-release');
 
         genres.style.display = "none";
         top_tracks.style.display = "none";
@@ -1139,11 +1171,6 @@ const APPController = (function (UICtrl, APICtrl) {
         document.getElementById("checkbox2").parentNode.style.display = 'none';
         document.getElementById("checkbox3").parentNode.style.display = 'none';
         document.getElementById("checkbox4").parentNode.style.display = 'none';
-
-        ABtn = document.getElementById("Abtn");
-        BBtn = document.getElementById("Bbtn");
-        CBtn = document.getElementById("Cbtn");
-        DBtn = document.getElementById("Dbtn");
 
         ABtn.style.display = 'none';
         BBtn.style.display = 'none';
@@ -1171,7 +1198,6 @@ const APPController = (function (UICtrl, APICtrl) {
 
     }
 
-    reset_btn = document.getElementById("reset-btn");
     reset_btn.addEventListener("click", resetPage);
 
     function resetPage() {
@@ -1271,7 +1297,6 @@ const APPController = (function (UICtrl, APICtrl) {
             document.getElementsByClassName("artist-detail")[0].classList.add("active");
             document.getElementsByClassName("chooseGame")[0].classList.add("active");
 
-            choose = document.getElementById('prompt-title');
             choose.style.display = "none";
             artistSelected = true;
             UICtrl.showStatus('');
@@ -1568,7 +1593,6 @@ const APPController = (function (UICtrl, APICtrl) {
     }
 
     function setQuestionBoxType(qType, AClick, BClick, CClick, DClick) {
-        submit = document.getElementById("submit");
         if (qType) {
 
             q1.style.display = "none";
@@ -1675,7 +1699,6 @@ const APPController = (function (UICtrl, APICtrl) {
             return;
         }
 
-        submit = document.getElementById("submit");
         if (sel_question == 2) {
             q1.style.display = "none";
             q2.style.display = "none";
@@ -1860,7 +1883,6 @@ const APPController = (function (UICtrl, APICtrl) {
         }
 
         var checkboxQ;
-        submit = document.getElementById("submit");
         if (sel_question == 2) {
             q1.style.display = "none";
             q2.style.display = "none";
@@ -1992,7 +2014,6 @@ const APPController = (function (UICtrl, APICtrl) {
 
         UIController.appendScore(` Hot Streak of ${score_board[0]}!`);
 
-        dismiss_btn = document.getElementById("dismiss-popup-btn");
         dismiss_btn.addEventListener("click", dismissPopup);
 
         if (score_board[1] != 0) {
@@ -2039,7 +2060,6 @@ const APPController = (function (UICtrl, APICtrl) {
 
         UIController.appendScore(` Score: ${score_board[0]}/${totalQ} answered`);
 
-        dismiss_btn = document.getElementById("dismiss-popup-btn");
         dismiss_btn.addEventListener("click", dismissPopup);
         if (questionSkipped) {
             document.getElementById("popup-title").textContent = `Question skipped`;
@@ -2095,7 +2115,6 @@ const APPController = (function (UICtrl, APICtrl) {
 
         UIController.appendScore(` Score ${score_board[0]} / ${score_board[1] + score_board[0]}!`);
 
-        dismiss_btn = document.getElementById("dismiss-popup-btn");
         dismiss_btn.addEventListener("click", dismissPopup);
    
         document.getElementById("dismiss-popup-btn").textContent = `Next Question`;
@@ -2117,8 +2136,6 @@ const APPController = (function (UICtrl, APICtrl) {
 
     }
 
-    play_again_btn = document.getElementById("play-again-btn");
-    hsbtn = document.getElementById('hsbtn');
     hsbtn.addEventListener('click', event => {
         if (artistSelected) {
             document.getElementsByClassName("chooseGame")[0].classList.remove("active");
@@ -2133,7 +2150,6 @@ const APPController = (function (UICtrl, APICtrl) {
         }
     });
 
-    testbtn = document.getElementById('testbtn');
     testbtn.addEventListener('click', event => {
         if (artistSelected) {
             document.getElementsByClassName("chooseGame")[0].classList.remove("active");
@@ -2148,7 +2164,6 @@ const APPController = (function (UICtrl, APICtrl) {
         }
     });
 
-    chbtn = document.getElementById('chbtn');
     chbtn.addEventListener('click', event => {
         if (artistSelected) {
             document.getElementsByClassName("chooseGame")[0].classList.remove("active");
