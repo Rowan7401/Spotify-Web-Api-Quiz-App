@@ -1066,6 +1066,23 @@ const UIController = (function () {
 const APPController = (function (UICtrl, APICtrl) {
 
     const DOMInputs = UICtrl.inputField();
+    const GRADE_THRESHOLDS = [
+        [0.93, 'A'],
+        [0.90, 'A-'],
+        [0.87, 'B+'],
+        [0.84, 'B'],
+        [0.80, 'B-'],
+        [0.77, 'C+'],
+        [0.74, 'C'],
+        [0.70, 'C-'],
+        [0.67, 'D+'],
+        [0.64, 'D'],
+        [0.60, 'D-']
+    ];
+
+    function getGrade(percentage) {
+        return GRADE_THRESHOLDS.find(([threshold]) => percentage >= threshold)?.[1] ?? 'F';
+    }
 
     var score_board = [0, 0];
     var artistSelected = false;
@@ -2037,41 +2054,9 @@ const APPController = (function (UICtrl, APICtrl) {
             if (totalQ === 0) {
                 document.getElementById("popup-title").textContent = `No score: Spotify did not provide data for any questions.`;
             }
-            else if (percentageRaw >= 0.93) {
-                document.getElementById("popup-title").textContent = ` Grade: [A] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.90 && percentageRaw < 0.93) {
-                document.getElementById("popup-title").textContent = ` Grade: [A-] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.87 && percentageRaw < 0.9) {
-                document.getElementById("popup-title").textContent = ` Grade: [B+] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.84 && percentageRaw < 0.87) {
-                document.getElementById("popup-title").textContent = ` Grade: [B] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.8 && percentageRaw < 0.84) {
-                document.getElementById("popup-title").textContent = ` Grade: [B-] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.77 && percentageRaw < 0.8) {
-                document.getElementById("popup-title").textContent = ` Grade: [C+] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.74 && percentageRaw < 0.77) {
-                document.getElementById("popup-title").textContent = ` Grade: [C] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.7 && percentageRaw < 0.74) {
-                document.getElementById("popup-title").textContent = ` Grade: [C-] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.67 && percentageRaw < 0.7) {
-                document.getElementById("popup-title").textContent = ` Grade: [D+] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.64 && percentageRaw < 0.67) {
-                document.getElementById("popup-title").textContent = ` Grade: [D] Final score: ${percentage}%`;
-            }
-            else if (percentageRaw >= 0.6 && percentageRaw < 0.64) {
-                document.getElementById("popup-title").textContent = ` Grade: [D-] Final score: ${percentage}%`;
-            }
             else {
-                document.getElementById("popup-title").textContent = ` Grade: [F] Final score: ${percentage}%`;
+                document.getElementById("popup-title").textContent =
+                    ` Grade: [${getGrade(percentageRaw)}] Final score: ${percentage}%`;
             }
             if (questionSkipped && totalQ > 0) {
                 document.getElementById("popup-title").textContent += ` (question skipped)`;
