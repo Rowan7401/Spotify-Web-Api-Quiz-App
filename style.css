@@ -520,16 +520,15 @@ label {
 
 #artist-detail img,
 #album-detail img {
-  max-width: 50vw;
+  display: block;
+  max-width: min(50vw, 18rem);
+  max-height: 18rem;
   height: auto;
+  object-fit: contain;
+  margin: 0 auto;
 }
 
 @media (max-width: 480px) {
-  #artist-detail img,
-  #album-detail img {
-    max-width: 95vw;
-  }
-
   .landing-header {
     padding: 1rem 0.1rem 0.3rem 0.1rem;
     margin-top: 0;
