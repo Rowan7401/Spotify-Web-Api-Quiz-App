@@ -1115,6 +1115,8 @@ const APPController = (function (UICtrl, APICtrl) {
     const album_count = document.getElementById('album-count');
     const album_tracks = document.getElementById('album-tracks');
     const album_release = document.getElementById('album-release');
+    const song_popularity = document.getElementById('song-popularity');
+    const artist_popularity = document.getElementById('artist-popularity');
     const ABtn = document.getElementById('Abtn');
     const BBtn = document.getElementById('Bbtn');
     const CBtn = document.getElementById('Cbtn');
@@ -1166,6 +1168,8 @@ const APPController = (function (UICtrl, APICtrl) {
         album_count.style.display = "none";
         album_tracks.style.display = "none";
         album_release.style.display = "none";
+        song_popularity.style.display = "none";
+        artist_popularity.style.display = "none";
         
         document.getElementById("checkbox1").parentNode.style.display = 'none';
         document.getElementById("checkbox2").parentNode.style.display = 'none';
@@ -1186,6 +1190,9 @@ const APPController = (function (UICtrl, APICtrl) {
                 throw new Error('Spotify did not return any artists.');
             }
             UICtrl.createDropdown();
+            popularityArtists = artists
+                .filter(element => element && typeof element.name === 'string' && Number.isFinite(element.popularity))
+                .map(element => ({ id: element.id, label: element.name, popularity: element.popularity }));
             artists.forEach(element => {
                 if (element && element.name && element.id) {
                     UICtrl.createArtist(element.name, element.id);
@@ -1239,6 +1246,7 @@ const APPController = (function (UICtrl, APICtrl) {
     var albums = [];
     var album_names = [];
     var randomAlbumIndex;
+    var popularityArtists = [];
     DOMInputs.artist.addEventListener('change', async () => {
         artistSelected = false;
         UICtrl.showStatus('Loading artist details...');
@@ -1334,6 +1342,8 @@ const APPController = (function (UICtrl, APICtrl) {
         album_count.style.display = "unset";
         album_tracks.style.display = "unset";
         album_release.style.display = "unset";
+        song_popularity.style.display = "unset";
+        artist_popularity.style.display = "unset";
 
         genres.addEventListener("click", GenresClick);
         top_tracks.addEventListener("click", TopTracksClick);
@@ -1342,6 +1352,58 @@ const APPController = (function (UICtrl, APICtrl) {
         album_count.addEventListener("click", AlbumCountClick);
         album_tracks.addEventListener("click", AlbumTracksClick);
         album_release.addEventListener("click", AlbumReleaseClick);
+        song_popularity.addEventListener("click", SongPopularityClick);
+        artist_popularity.addEventListener("click", ArtistPopularityClick);
+
+        function removeQuestionChoiceListeners() {
+            genres.removeEventListener("click", GenresClick);
+            top_tracks.removeEventListener("click", TopTracksClick);
+            track_release.removeEventListener("click", TrackReleaseClick);
+            track_length.removeEventListener("click", TrackLengthClick);
+            album_count.removeEventListener("click", AlbumCountClick);
+            album_tracks.removeEventListener("click", AlbumTracksClick);
+            album_release.removeEventListener("click", AlbumReleaseClick);
+            song_popularity.removeEventListener("click", SongPopularityClick);
+            artist_popularity.removeEventListener("click", ArtistPopularityClick);
+        }
+
+        function startPopularityQuestion(items, prompt) {
+            const started = PopularityMatchingQuestion.start(items, correct => {
+                score_board[correct ? 0 : 1]++;
+                document.getElementsByClassName("matching-game")[0].classList.remove("active");
+                checkChooseQAnswer(correct);
+            });
+
+            if (!started) {
+                UICtrl.setQuestionText('Not enough distinct Spotify popularity data for four matches. Skipping this question.');
+                skipUnavailableQuestion();
+                return;
+            }
+
+            UICtrl.setQuestionText(prompt);
+            document.getElementsByClassName("question")[0].classList.add("active");
+            document.getElementsByClassName("chooseQ-game")[0].classList.remove("active");
+            document.getElementsByClassName("matching-game")[0].classList.add("active");
+            removeQuestionChoiceListeners();
+        }
+
+        function SongPopularityClick() {
+            const tracks = Array.isArray(artistTopTen?.tracks) ? artistTopTen.tracks : [];
+            const items = tracks.map(track => {
+                const artists = Array.isArray(track?.artists)
+                    ? track.artists.map(trackArtist => trackArtist?.name).filter(Boolean).join(', ')
+                    : '';
+                return {
+                    label: artists ? `${track?.name || 'Unknown track'} - ${artists}` : track?.name,
+                    popularity: track?.popularity
+                };
+            });
+            startPopularityQuestion(items, 'Rank these songs by Spotify popularity');
+        }
+
+        function ArtistPopularityClick() {
+            startPopularityQuestion(popularityArtists, 'Rank these artists by Spotify popularity');
+        }
 
 
         function AClick(event) {
@@ -1418,6 +1480,8 @@ const APPController = (function (UICtrl, APICtrl) {
             album_count.removeEventListener("click", AlbumCountClick);
             album_tracks.removeEventListener("click", AlbumTracksClick);
             album_release.removeEventListener("click", AlbumReleaseClick);
+            song_popularity.removeEventListener("click", SongPopularityClick);
+            artist_popularity.removeEventListener("click", ArtistPopularityClick);
             document.getElementsByClassName("chooseQ-game")[0].classList.remove("active");
             document.getElementsByClassName("qbox")[0].classList.remove("active");
             document.getElementsByClassName("question")[0].classList.add("active");
@@ -1439,6 +1503,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             
             genres.removeEventListener("click", GenresClick);
             top_tracks.removeEventListener("click", TopTracksClick);
@@ -1473,6 +1538,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("question")[0].classList.add("active");
 
             genres.removeEventListener("click", GenresClick);
@@ -1493,6 +1559,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("question")[0].classList.add("active");
 
             genres.removeEventListener("click", GenresClick);
@@ -1512,6 +1579,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("question")[0].classList.add("active");
 
             genres.removeEventListener("click", GenresClick);
@@ -1531,6 +1599,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("question")[0].classList.add("active");
 
             genres.removeEventListener("click", GenresClick);
@@ -1550,6 +1619,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("question")[0].classList.add("active");
 
             genres.removeEventListener("click", GenresClick);
@@ -1569,6 +1639,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("question")[0].classList.add("active");
 
             genres.removeEventListener("click", GenresClick);

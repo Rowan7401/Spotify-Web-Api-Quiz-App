@@ -246,6 +246,7 @@ label {
 .chooseGame,
 .dropdown,
 .chooseQ-game,
+.matching-game,
 .qbox,
 .question,
 .artist-detail,
@@ -261,6 +262,7 @@ label {
 
 .chooseGame.active,
 .chooseQ-game.active,
+.matching-game.active,
 .dropdown.active,
 .popup-center.active,
 .qbox.active,
@@ -276,6 +278,7 @@ label {
 
 .chooseGame.active,
 .chooseQ-game.active,
+.matching-game.active,
 .question.active,
 .qbox.active,
 .reset-page.active {
@@ -768,4 +771,89 @@ label {
   color: #1db954;
   box-shadow: 0 4px 16px #1db95444;
   border-color: #1ed760;
+}
+
+.matching-game {
+  display: none;
+  box-sizing: border-box;
+  width: min(100%, 42rem);
+  padding: 1.25rem;
+  border: 2px solid #1db954;
+  border-radius: 1rem;
+  background: #191414;
+  color: #fff;
+  text-align: center;
+}
+
+.matching-game h3 {
+  margin: 0 0 0.5rem;
+  color: #1ed760;
+}
+
+.matching-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  text-align: left;
+}
+
+.matching-columns h4 {
+  margin: 0.5rem 0;
+  color: #1ed760;
+}
+
+.matching-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.matching-list button,
+.matching-submit {
+  min-height: 2.75rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #1db954;
+  border-radius: 0.6rem;
+  background: #232323;
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.matching-list button.selected,
+.matching-list button:hover,
+.matching-submit:not(:disabled):hover {
+  background: #1db954;
+  color: #111;
+}
+
+.matching-list button:focus-visible,
+.matching-submit:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.matching-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+#matching-status {
+  min-height: 1.5em;
+  color: #d9d9d9;
+}
+
+@media (max-width: 480px) {
+  .matching-game {
+    padding: 0.75rem;
+  }
+
+  .matching-columns {
+    gap: 0.5rem;
+  }
+
+  .matching-list button {
+    padding: 0.5rem 0.3rem;
+    font-size: 0.85rem;
+    overflow-wrap: anywhere;
+  }
 }

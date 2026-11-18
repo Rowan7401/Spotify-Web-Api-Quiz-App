@@ -120,6 +120,23 @@
 
             </div>
 
+            <section class="matching-game" aria-labelledby="matching-title">
+                <h3 id="matching-title">Popularity ranking</h3>
+                <p>Match each song or artist to its rank. Rank 1 is most popular.</p>
+                <div class="matching-columns">
+                    <div>
+                        <h4>Options</h4>
+                        <div id="matching-items" class="matching-list"></div>
+                    </div>
+                    <div>
+                        <h4>Popularity rank</h4>
+                        <div id="matching-ranks" class="matching-list"></div>
+                    </div>
+                </div>
+                <p id="matching-status" role="status" aria-live="polite"></p>
+                <button type="button" class="matching-submit" id="matching-submit" disabled>Submit ranking</button>
+            </section>
+
             <div class="chooseQ-game">
                 <div class="chooseQ-buttons">
                     <button type="button" class="chooseQ-btn" id="genres">Unrelated Genres</button>
@@ -129,6 +146,8 @@
                     <button type="button" class="chooseQ-btn" id="album-count">Album Count</button>
                     <button type="button" class="chooseQ-btn" id="album-tracks">Album Track Count</button>
                     <button type="button" class="chooseQ-btn" id="album-release">Album Release Dates</button>
+                    <button type="button" class="chooseQ-btn" id="song-popularity">Song Popularity Ranking</button>
+                    <button type="button" class="chooseQ-btn" id="artist-popularity">Artist Popularity Ranking</button>
                 </div>
 
             </div>
@@ -168,6 +187,7 @@
     </div>
 
 
+    <script src="popularity-matching.js" type="text/javascript"></script>
     <script src="index.js" type="text/javascript"></script>
 </body>
 
