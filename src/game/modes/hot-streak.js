@@ -1,0 +1,18 @@
+import { QUESTION_IDS } from '../question-catalog.js';
+
+export const HOT_STREAK_QUESTION_IDS = Object.freeze([
+    QUESTION_IDS.POPULARITY,
+    QUESTION_IDS.FOLLOWERS,
+    QUESTION_IDS.GENRES,
+    QUESTION_IDS.TOP_TRACKS,
+    QUESTION_IDS.TRACK_RELEASE,
+    QUESTION_IDS.TRACK_LENGTH,
+    QUESTION_IDS.TRACK_POPULARITY,
+    QUESTION_IDS.ALBUM_COUNT,
+    QUESTION_IDS.ALBUM_TRACK_COUNT,
+    QUESTION_IDS.ALBUM_RELEASE
+]);
+
+export function selectHotStreakQuestion(random = Math.random) {
+    return HOT_STREAK_QUESTION_IDS[Math.floor(random() * HOT_STREAK_QUESTION_IDS.length)];
+}
