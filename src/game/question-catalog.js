@@ -1,8 +1,10 @@
 export const QUESTION_IDS = Object.freeze({
     POPULARITY: 'artist-popularity',
+    ARTIST_POPULARITY_RANKING: 'artist-popularity-ranking',
     FOLLOWERS: 'artist-followers',
     GENRES: 'artist-genres',
     TOP_TRACKS: 'artist-top-tracks',
+    SONG_POPULARITY_RANKING: 'song-popularity-ranking',
     TRACK_RELEASE: 'track-release-date',
     TRACK_LENGTH: 'track-length',
     TRACK_POPULARITY: 'track-popularity',
@@ -13,13 +15,42 @@ export const QUESTION_IDS = Object.freeze({
 
 export const QUESTION_TYPES = Object.freeze({
     MULTIPLE_CHOICE: 'multiple-choice',
-    CHECKBOX_SELECTION: 'checkbox-selection'
+    CHECKBOX_SELECTION: 'checkbox-selection',
+    POPULARITY_MATCHING: 'popularity-matching'
 });
+
+function getSongPopularityItems(artistTopTen) {
+    const tracks = Array.isArray(artistTopTen?.tracks) ? artistTopTen.tracks : [];
+    return tracks.map(track => {
+        const artists = Array.isArray(track?.artists)
+            ? track.artists.map(trackArtist => trackArtist?.name).filter(Boolean).join(', ')
+            : '';
+        return {
+            label: artists ? `${track?.name || 'Unknown track'} - ${artists}` : track?.name,
+            popularity: track?.popularity
+        };
+    });
+}
+
+function createPopularityMatchingQuestion(items, prompt, requiredItemId) {
+    return { items, prompt, requiredItemId };
+}
 
 export const QUESTION_CATALOG = Object.freeze({
     [QUESTION_IDS.POPULARITY]: {
         type: QUESTION_TYPES.MULTIPLE_CHOICE,
         setup: ({ ui, artist, mcSpot }) => ui.popularity(artist, mcSpot)
+    },
+    [QUESTION_IDS.ARTIST_POPULARITY_RANKING]: {
+        type: QUESTION_TYPES.POPULARITY_MATCHING,
+        setup: ({ artist, popularityArtists = [] }) => createPopularityMatchingQuestion(
+            [
+                { id: artist?.id, label: artist?.name, popularity: artist?.popularity },
+                ...popularityArtists.filter(candidate => candidate.id !== artist?.id)
+            ],
+            'Match each artist to its Spotify popularity score',
+            artist?.id
+        )
     },
     [QUESTION_IDS.FOLLOWERS]: {
         type: QUESTION_TYPES.MULTIPLE_CHOICE,
@@ -33,6 +64,13 @@ export const QUESTION_CATALOG = Object.freeze({
         type: QUESTION_TYPES.MULTIPLE_CHOICE,
         setup: ({ ui, artistTopTracks, artist, mcSpot }) =>
             ui.topTracks(artist, artistTopTracks, mcSpot)
+    },
+    [QUESTION_IDS.SONG_POPULARITY_RANKING]: {
+        type: QUESTION_TYPES.POPULARITY_MATCHING,
+        setup: ({ artistTopTen }) => createPopularityMatchingQuestion(
+            getSongPopularityItems(artistTopTen),
+            'Match each song to its Spotify popularity score'
+        )
     },
     [QUESTION_IDS.TRACK_RELEASE]: {
         type: QUESTION_TYPES.MULTIPLE_CHOICE,

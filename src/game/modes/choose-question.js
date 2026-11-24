@@ -7,5 +7,7 @@ export const CHOOSE_QUESTION_BUTTONS = Object.freeze([
     { buttonId: 'track-length', questionId: QUESTION_IDS.TRACK_LENGTH },
     { buttonId: 'album-count', questionId: QUESTION_IDS.ALBUM_COUNT },
     { buttonId: 'album-tracks', questionId: QUESTION_IDS.ALBUM_TRACK_COUNT },
-    { buttonId: 'album-release', questionId: QUESTION_IDS.ALBUM_RELEASE }
+    { buttonId: 'album-release', questionId: QUESTION_IDS.ALBUM_RELEASE },
+    { buttonId: 'song-popularity', questionId: QUESTION_IDS.SONG_POPULARITY_RANKING },
+    { buttonId: 'artist-popularity', questionId: QUESTION_IDS.ARTIST_POPULARITY_RANKING }
 ]);

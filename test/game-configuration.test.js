@@ -59,9 +59,36 @@ test('hot streak question selection stays within its configured list', () => {
 
 test('full test preserves its fourteen-question sequence', () => {
     assert.equal(FULL_TEST_QUESTION_IDS.length, 14);
-    assert.equal(getFullTestQuestion(0), FULL_TEST_QUESTION_IDS[0]);
+    assert.equal(getFullTestQuestion(0), 'artist-popularity-ranking');
+    assert.equal(getFullTestQuestion(6), 'song-popularity-ranking');
+    assert.equal(getFullTestQuestion(10), 'song-popularity-ranking');
     assert.equal(getFullTestQuestion(13), FULL_TEST_QUESTION_IDS[13]);
     assert.equal(getFullTestQuestion(14), null);
+});
+
+test('popularity ranking questions are available in choose mode', () => {
+    assert.ok(CHOOSE_QUESTION_BUTTONS.some(({ buttonId, questionId }) =>
+        buttonId === 'artist-popularity' && questionId === 'artist-popularity-ranking'));
+    assert.ok(CHOOSE_QUESTION_BUTTONS.some(({ buttonId, questionId }) =>
+        buttonId === 'song-popularity' && questionId === 'song-popularity-ranking'));
+});
+
+test('artist popularity matching requires the selected artist to be included', () => {
+    const setup = getQuestionDefinition('artist-popularity-ranking').setup;
+    const question = setup({
+        artist: { id: 'selected', name: 'Selected Artist', popularity: 80 },
+        popularityArtists: [
+            { id: 'selected', label: 'Selected Artist', popularity: 80 },
+            { id: 'other', label: 'Other Artist', popularity: 60 }
+        ]
+    });
+
+    assert.equal(question.requiredItemId, 'selected');
+    assert.deepEqual(question.items[0], {
+        id: 'selected',
+        label: 'Selected Artist',
+        popularity: 80
+    });
 });
 
 test('unknown questions and input types fail explicitly', () => {
@@ -94,4 +121,16 @@ test('checkbox input exposes submit controls and hides multiple-choice controls'
     assert.ok(elements.checkboxes.every(({ checked, parentNode }) =>
         !checked && parentNode.style.display === 'unset'));
     assert.equal(elements.submitButton.style.display, 'unset');
+});
+
+test('matching input hides the standard quiz controls', () => {
+    const elements = createQuestionInputElements();
+
+    configureQuestionInput(QUESTION_TYPES.POPULARITY_MATCHING, elements);
+
+    assert.ok(elements.questionChoices.every(({ style }) => style.display === 'none'));
+    assert.ok(elements.answerButtons.every(({ style }) => style.display === 'none'));
+    assert.ok(elements.checkboxes.every(({ checked, parentNode }) =>
+        !checked && parentNode.style.display === 'none'));
+    assert.equal(elements.submitButton.style.display, 'none');
 });

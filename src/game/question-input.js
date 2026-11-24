@@ -11,12 +11,13 @@ export function configureQuestionInput(type, {
     }
 
     const isCheckboxSelection = type === QUESTION_TYPES.CHECKBOX_SELECTION;
+    const isMultipleChoice = type === QUESTION_TYPES.MULTIPLE_CHOICE;
 
     questionChoices.forEach(choice => {
-        choice.style.display = isCheckboxSelection ? 'none' : 'unset';
+        choice.style.display = isMultipleChoice ? 'unset' : 'none';
     });
     answerButtons.forEach(button => {
-        button.style.display = isCheckboxSelection ? 'none' : 'unset';
+        button.style.display = isMultipleChoice ? 'unset' : 'none';
     });
     checkboxes.forEach(checkbox => {
         checkbox.checked = false;

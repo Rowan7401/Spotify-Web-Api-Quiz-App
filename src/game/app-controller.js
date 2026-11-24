@@ -8,6 +8,7 @@ import {
     setupQuestion
 } from './question-catalog.js';
 import { configureQuestionInput } from './question-input.js';
+import { PopularityMatchingQuestion } from './question-inputs/popularity-matching.js';
 import { CHOOSE_QUESTION_BUTTONS } from './modes/choose-question.js';
 import { getFullTestQuestion } from './modes/full-test.js';
 import { selectHotStreakQuestion } from './modes/hot-streak.js';
@@ -43,6 +44,7 @@ const APPController = (function (UICtrl, APICtrl) {
     const album_count = document.getElementById('album-count');
     const album_tracks = document.getElementById('album-tracks');
     const album_release = document.getElementById('album-release');
+    const matchingGame = document.querySelector('.matching-game');
     const ABtn = document.getElementById('Abtn');
     const BBtn = document.getElementById('Bbtn');
     const CBtn = document.getElementById('Cbtn');
@@ -110,13 +112,9 @@ const APPController = (function (UICtrl, APICtrl) {
         q3.style.display = "none";
         q4.style.display = "none";
 
-        genres.style.display = "none";
-        top_tracks.style.display = "none";
-        track_release.style.display = "none";
-        track_length.style.display = "none";
-        album_count.style.display = "none";
-        album_tracks.style.display = "none";
-        album_release.style.display = "none";
+        CHOOSE_QUESTION_BUTTONS.forEach(({ buttonId }) => {
+            document.getElementById(buttonId).style.display = 'none';
+        });
         
         document.getElementById("checkbox1").parentNode.style.display = 'none';
         document.getElementById("checkbox2").parentNode.style.display = 'none';
@@ -136,6 +134,15 @@ const APPController = (function (UICtrl, APICtrl) {
             if (artists.length === 0) {
                 throw new Error('Spotify did not return any artists.');
             }
+            popularityArtists = artists
+                .filter(candidate => candidate && typeof candidate.id === 'string'
+                    && typeof candidate.name === 'string'
+                    && Number.isFinite(candidate.popularity))
+                .map(candidate => ({
+                    id: candidate.id,
+                    label: candidate.name,
+                    popularity: candidate.popularity
+                }));
             UICtrl.createDropdown();
             artists.forEach(element => {
                 if (element && element.name && element.id) {
@@ -196,6 +203,7 @@ const APPController = (function (UICtrl, APICtrl) {
     var albums = [];
     var album_names = [];
     var randomAlbumIndex;
+    var popularityArtists = [];
 
     function setupGameQuestion(questionId, mcSpot) {
         return setupQuestion(questionId, {
@@ -205,6 +213,7 @@ const APPController = (function (UICtrl, APICtrl) {
             artistTopTen,
             artistAlbums,
             albums,
+            popularityArtists,
             albumIndex: randomAlbumIndex,
             mcSpot,
             recordAnswer
@@ -310,13 +319,9 @@ const APPController = (function (UICtrl, APICtrl) {
         document.getElementsByClassName("album-detail")[0].classList.remove("active");
         document.getElementsByClassName("artist-detail")[0].classList.add("active");
 
-        genres.style.display = "unset";
-        top_tracks.style.display = "unset";
-        track_release.style.display = "unset";
-        track_length.style.display = "unset";
-        album_count.style.display = "unset";
-        album_tracks.style.display = "unset";
-        album_release.style.display = "unset";
+        CHOOSE_QUESTION_BUTTONS.forEach(({ buttonId }) => {
+            document.getElementById(buttonId).style.display = 'unset';
+        });
 
         const handlersByQuestionId = new Map([
             [QUESTION_IDS.GENRES, GenresClick],
@@ -325,7 +330,9 @@ const APPController = (function (UICtrl, APICtrl) {
             [QUESTION_IDS.TRACK_LENGTH, TrackLengthClick],
             [QUESTION_IDS.ALBUM_COUNT, AlbumCountClick],
             [QUESTION_IDS.ALBUM_TRACK_COUNT, AlbumTracksClick],
-            [QUESTION_IDS.ALBUM_RELEASE, AlbumReleaseClick]
+            [QUESTION_IDS.ALBUM_RELEASE, AlbumReleaseClick],
+            [QUESTION_IDS.SONG_POPULARITY_RANKING, SongPopularityClick],
+            [QUESTION_IDS.ARTIST_POPULARITY_RANKING, ArtistPopularityClick]
         ]);
         CHOOSE_QUESTION_BUTTONS.forEach(({ buttonId, questionId }) => {
             document.getElementById(buttonId).addEventListener('click', handlersByQuestionId.get(questionId));
@@ -399,17 +406,51 @@ const APPController = (function (UICtrl, APICtrl) {
 
         function skipUnavailableQuestion() {
             updateGameState({ questionSkipped: true });
-            genres.removeEventListener("click", GenresClick);
-            top_tracks.removeEventListener("click", TopTracksClick);
-            track_release.removeEventListener("click", TrackReleaseClick);
-            track_length.removeEventListener("click", TrackLengthClick);
-            album_count.removeEventListener("click", AlbumCountClick);
-            album_tracks.removeEventListener("click", AlbumTracksClick);
-            album_release.removeEventListener("click", AlbumReleaseClick);
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("chooseQ-game")[0].classList.remove("active");
             document.getElementsByClassName("qbox")[0].classList.remove("active");
+            matchingGame.classList.remove('active');
             document.getElementsByClassName("question")[0].classList.add("active");
             checkChooseQAnswer(false);
+        }
+
+        function removeQuestionChoiceListeners() {
+            CHOOSE_QUESTION_BUTTONS.forEach(({ buttonId, questionId }) => {
+                document.getElementById(buttonId).removeEventListener('click', handlersByQuestionId.get(questionId));
+            });
+        }
+
+        function startPopularityQuestion(questionId) {
+            const question = setupGameQuestion(questionId);
+            if (!question?.items?.length || !PopularityMatchingQuestion.start(
+                question.items,
+                (correct, correctAnswers) => {
+                    recordAnswer(correct);
+                    matchingGame.classList.remove('active');
+                    checkChooseQAnswer(correct, correctAnswers);
+                },
+                question.requiredItemId
+            )) {
+                UICtrl.setQuestionText('Not enough distinct Spotify popularity data for four matches. Skipping this question.');
+                skipUnavailableQuestion();
+                return;
+            }
+
+            UICtrl.setQuestionText(question.prompt);
+            setQuestionBoxType(QUESTION_TYPES.POPULARITY_MATCHING);
+            document.getElementsByClassName("question")[0].classList.add("active");
+            document.getElementsByClassName("chooseQ-game")[0].classList.remove("active");
+            document.getElementsByClassName("qbox")[0].classList.remove("active");
+            matchingGame.classList.add('active');
+            removeQuestionChoiceListeners();
+        }
+
+        function SongPopularityClick() {
+            startPopularityQuestion(QUESTION_IDS.SONG_POPULARITY_RANKING);
+        }
+
+        function ArtistPopularityClick() {
+            startPopularityQuestion(QUESTION_IDS.ARTIST_POPULARITY_RANKING);
         }
 
         async function GenresClick(event) {
@@ -602,23 +643,23 @@ const APPController = (function (UICtrl, APICtrl) {
         }
     }
 
-    function checkChooseQAnswer(correct) {
+    function checkChooseQAnswer(correct, correctAnswers = null) {
         if (gameStore.getState().questionSkipped) {
             document.getElementById("popup-title").textContent = `Question skipped`;
             document.getElementById("fire").textContent = `ℹ️`;
-            chooseQAnswerPopUp();
+            chooseQAnswerPopUp(correctAnswers);
         }
         else if (correct) {
             console.log("Correct")
             document.getElementById("popup-title").textContent = `Correct!!`;
             document.getElementById("fire").textContent = `✅`
-            chooseQAnswerPopUp();
+            chooseQAnswerPopUp(correctAnswers);
         }
         else {
             console.log("Incorrect");
             document.getElementById("popup-title").textContent = `Incorrect!!`;
             document.getElementById("fire").textContent = `❌`
-            chooseQAnswerPopUp();
+            chooseQAnswerPopUp(correctAnswers);
         }
     }
 
@@ -735,6 +776,36 @@ const APPController = (function (UICtrl, APICtrl) {
         fullTestQuestion(sel_question);
     }
 
+    function startFullTestPopularityQuestion(questionId) {
+        const question = setupGameQuestion(questionId);
+        document.getElementsByClassName("qbox")[0].classList.remove("active");
+        UICtrl.removeAlbumImage();
+
+        if (!question?.items?.length || !PopularityMatchingQuestion.start(
+            question.items,
+            (correct, correctAnswers) => {
+                recordAnswer(correct);
+                matchingGame.classList.remove('active');
+                document.getElementById("popup-title").textContent = correct
+                    ? 'Correct! Good job!'
+                    : 'Incorrect... Get the next one!';
+                document.getElementById("fire").textContent = correct ? '✅' : '❌';
+                updateGameState({ phase: 'feedback' });
+                fullTestPopup(correctAnswers);
+            },
+            question.requiredItemId
+        )) {
+            updateGameState({ questionSkipped: true, phase: 'feedback' });
+            matchingGame.classList.remove('active');
+            fullTestPopup();
+            return;
+        }
+
+        UICtrl.setQuestionText(question.prompt);
+        setQuestionBoxType(QUESTION_TYPES.POPULARITY_MATCHING);
+        matchingGame.classList.add('active');
+    }
+
     async function fullTestQuestion(sel_question) {
         updateGameState({ questionSkipped: false });
         let questionAvailable = true;
@@ -746,6 +817,11 @@ const APPController = (function (UICtrl, APICtrl) {
             throw new RangeError(`No full-test question at index ${sel_question}`);
         }
         const questionType = getQuestionDefinition(questionId).type;
+
+        if (questionType === QUESTION_TYPES.POPULARITY_MATCHING) {
+            startFullTestPopularityQuestion(questionId);
+            return;
+        }
 
         if (albums.length != 0) {
             randomAlbumIndex = Math.floor(Math.random() * albums.length);
@@ -839,8 +915,9 @@ const APPController = (function (UICtrl, APICtrl) {
 
     }
 
-    function fullTestPopup() {
+    function fullTestPopup(correctAnswers = null) {
         document.getElementsByClassName("popup-center")[0].classList.add("active");
+        setMatchingAnswerKey(correctAnswers);
 
         var totalQ = getScore().correct + getScore().incorrect;
 
@@ -879,12 +956,16 @@ const APPController = (function (UICtrl, APICtrl) {
                 document.getElementById("score").textContent = ``;
                 dismiss_btn.removeEventListener("click", dismissPopup);
                 document.getElementsByClassName("popup-center")[0].classList.remove("active");
+                matchingGame.classList.remove('active');
+                setMatchingAnswerKey(null);
                 UICtrl.removeAlbumImage();
                 updateGameState({ questionSkipped: false });
                 fullTest();
             }
             else {
                 document.getElementsByClassName("popup-center")[0].classList.remove("active");
+                matchingGame.classList.remove('active');
+                setMatchingAnswerKey(null);
                 document.getElementsByClassName("question")[0].classList.remove("active");
                 document.getElementsByClassName("reset-page")[0].classList.add("active");
                 dismiss_btn.removeEventListener("click", dismissPopup);
@@ -896,8 +977,9 @@ const APPController = (function (UICtrl, APICtrl) {
 
     }
 
-    function chooseQAnswerPopUp() {
+    function chooseQAnswerPopUp(correctAnswers = null) {
         document.getElementsByClassName("popup-center")[0].classList.add("active");
+        setMatchingAnswerKey(correctAnswers);
 
         UIController.appendScore(` Score ${getScore().correct} / ${getScore().incorrect + getScore().correct}!`);
 
@@ -910,6 +992,8 @@ const APPController = (function (UICtrl, APICtrl) {
             UICtrl.removeAlbumImage();
             dismiss_btn.removeEventListener("click", dismissPopup);
             document.getElementsByClassName("popup-center")[0].classList.remove("active");
+            matchingGame.classList.remove('active');
+            setMatchingAnswerKey(null);
             
             document.getElementsByClassName("question")[0].classList.remove("active");
             document.getElementsByClassName("chooseQ-game")[0].classList.add("active");
@@ -920,6 +1004,29 @@ const APPController = (function (UICtrl, APICtrl) {
         }
         console.log(getScore());
 
+    }
+
+    function setMatchingAnswerKey(correctAnswers) {
+        const answerKey = document.getElementById('matching-answer-key');
+        answerKey.replaceChildren();
+        answerKey.classList.toggle('active', Array.isArray(correctAnswers) && correctAnswers.length > 0);
+        if (!Array.isArray(correctAnswers)) {
+            return;
+        }
+
+        const answersByScore = new Map();
+        correctAnswers.forEach(({ popularity, label }) => {
+            if (!answersByScore.has(popularity)) {
+                answersByScore.set(popularity, []);
+            }
+            answersByScore.get(popularity).push(label);
+        });
+        answersByScore.forEach((labels, popularity) => {
+            const answer = document.createElement('li');
+            const scoreLabel = labels.length > 1 ? `${popularity} (x${labels.length})` : popularity;
+            answer.textContent = `${scoreLabel} - ${labels.join(', ')}`;
+            answerKey.append(answer);
+        });
     }
 
     hsbtn.addEventListener('click', event => {
