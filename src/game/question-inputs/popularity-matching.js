@@ -1,6 +1,6 @@
 'use strict';
 
-const PopularityMatchingQuestion = (function () {
+export const PopularityMatchingQuestion = (function () {
     const ITEM_COUNT = 4;
     const itemContainer = document.getElementById('matching-items');
     const scoreContainer = document.getElementById('matching-scores');
