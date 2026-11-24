@@ -1115,6 +1115,8 @@ const APPController = (function (UICtrl, APICtrl) {
     const album_count = document.getElementById('album-count');
     const album_tracks = document.getElementById('album-tracks');
     const album_release = document.getElementById('album-release');
+    const song_popularity = document.getElementById('song-popularity');
+    const artist_popularity = document.getElementById('artist-popularity');
     const ABtn = document.getElementById('Abtn');
     const BBtn = document.getElementById('Bbtn');
     const CBtn = document.getElementById('Cbtn');
@@ -1166,6 +1168,8 @@ const APPController = (function (UICtrl, APICtrl) {
         album_count.style.display = "none";
         album_tracks.style.display = "none";
         album_release.style.display = "none";
+        song_popularity.style.display = "none";
+        artist_popularity.style.display = "none";
         
         document.getElementById("checkbox1").parentNode.style.display = 'none';
         document.getElementById("checkbox2").parentNode.style.display = 'none';
@@ -1186,6 +1190,9 @@ const APPController = (function (UICtrl, APICtrl) {
                 throw new Error('Spotify did not return any artists.');
             }
             UICtrl.createDropdown();
+            popularityArtists = artists
+                .filter(element => element && typeof element.name === 'string' && Number.isFinite(element.popularity))
+                .map(element => ({ id: element.id, label: element.name, popularity: element.popularity }));
             artists.forEach(element => {
                 if (element && element.name && element.id) {
                     UICtrl.createArtist(element.name, element.id);
@@ -1239,6 +1246,32 @@ const APPController = (function (UICtrl, APICtrl) {
     var albums = [];
     var album_names = [];
     var randomAlbumIndex;
+    var popularityArtists = [];
+    function getSongPopularityItems() {
+        const tracks = Array.isArray(artistTopTen?.tracks) ? artistTopTen.tracks : [];
+        return tracks.map(track => {
+            const artists = Array.isArray(track?.artists)
+                ? track.artists.map(trackArtist => trackArtist?.name).filter(Boolean).join(', ')
+                : '';
+            return {
+                label: artists ? `${track?.name || 'Unknown track'} - ${artists}` : track?.name,
+                popularity: track?.popularity
+            };
+        });
+    }
+
+    function getArtistPopularityItems() {
+        const selectedArtist = {
+            id: artist.id,
+            label: artist.name,
+            popularity: artist.popularity
+        };
+        return [
+            selectedArtist,
+            ...popularityArtists.filter(candidate => candidate.id !== selectedArtist.id)
+        ];
+    }
+
     DOMInputs.artist.addEventListener('change', async () => {
         artistSelected = false;
         UICtrl.showStatus('Loading artist details...');
@@ -1334,6 +1367,8 @@ const APPController = (function (UICtrl, APICtrl) {
         album_count.style.display = "unset";
         album_tracks.style.display = "unset";
         album_release.style.display = "unset";
+        song_popularity.style.display = "unset";
+        artist_popularity.style.display = "unset";
 
         genres.addEventListener("click", GenresClick);
         top_tracks.addEventListener("click", TopTracksClick);
@@ -1342,6 +1377,52 @@ const APPController = (function (UICtrl, APICtrl) {
         album_count.addEventListener("click", AlbumCountClick);
         album_tracks.addEventListener("click", AlbumTracksClick);
         album_release.addEventListener("click", AlbumReleaseClick);
+        song_popularity.addEventListener("click", SongPopularityClick);
+        artist_popularity.addEventListener("click", ArtistPopularityClick);
+
+        function removeQuestionChoiceListeners() {
+            genres.removeEventListener("click", GenresClick);
+            top_tracks.removeEventListener("click", TopTracksClick);
+            track_release.removeEventListener("click", TrackReleaseClick);
+            track_length.removeEventListener("click", TrackLengthClick);
+            album_count.removeEventListener("click", AlbumCountClick);
+            album_tracks.removeEventListener("click", AlbumTracksClick);
+            album_release.removeEventListener("click", AlbumReleaseClick);
+            song_popularity.removeEventListener("click", SongPopularityClick);
+            artist_popularity.removeEventListener("click", ArtistPopularityClick);
+        }
+
+        function startPopularityQuestion(items, prompt, requiredItemId) {
+            const started = PopularityMatchingQuestion.start(items, (correct, correctAnswers) => {
+                score_board[correct ? 0 : 1]++;
+                document.getElementsByClassName("matching-game")[0].classList.remove("active");
+                checkChooseQAnswer(correct, correctAnswers);
+            }, requiredItemId);
+
+            if (!started) {
+                UICtrl.setQuestionText('Not enough distinct Spotify popularity data for four matches. Skipping this question.');
+                skipUnavailableQuestion();
+                return;
+            }
+
+            UICtrl.setQuestionText(prompt);
+            document.getElementsByClassName("question")[0].classList.add("active");
+            document.getElementsByClassName("chooseQ-game")[0].classList.remove("active");
+            document.getElementsByClassName("matching-game")[0].classList.add("active");
+            removeQuestionChoiceListeners();
+        }
+
+        function SongPopularityClick() {
+            startPopularityQuestion(getSongPopularityItems(), 'Match each song to its Spotify popularity score');
+        }
+
+        function ArtistPopularityClick() {
+            startPopularityQuestion(
+                getArtistPopularityItems(),
+                'Match each artist to its Spotify popularity score',
+                artist.id
+            );
+        }
 
 
         function AClick(event) {
@@ -1418,6 +1499,8 @@ const APPController = (function (UICtrl, APICtrl) {
             album_count.removeEventListener("click", AlbumCountClick);
             album_tracks.removeEventListener("click", AlbumTracksClick);
             album_release.removeEventListener("click", AlbumReleaseClick);
+            song_popularity.removeEventListener("click", SongPopularityClick);
+            artist_popularity.removeEventListener("click", ArtistPopularityClick);
             document.getElementsByClassName("chooseQ-game")[0].classList.remove("active");
             document.getElementsByClassName("qbox")[0].classList.remove("active");
             document.getElementsByClassName("question")[0].classList.add("active");
@@ -1439,6 +1522,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             
             genres.removeEventListener("click", GenresClick);
             top_tracks.removeEventListener("click", TopTracksClick);
@@ -1473,6 +1557,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("question")[0].classList.add("active");
 
             genres.removeEventListener("click", GenresClick);
@@ -1493,6 +1578,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("question")[0].classList.add("active");
 
             genres.removeEventListener("click", GenresClick);
@@ -1512,6 +1598,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("question")[0].classList.add("active");
 
             genres.removeEventListener("click", GenresClick);
@@ -1531,6 +1618,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("question")[0].classList.add("active");
 
             genres.removeEventListener("click", GenresClick);
@@ -1550,6 +1638,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("question")[0].classList.add("active");
 
             genres.removeEventListener("click", GenresClick);
@@ -1569,6 +1658,7 @@ const APPController = (function (UICtrl, APICtrl) {
                 return;
             }
             setQuestionBoxType(qType, AClick, BClick, CClick, DClick)
+            removeQuestionChoiceListeners();
             document.getElementsByClassName("question")[0].classList.add("active");
 
             genres.removeEventListener("click", GenresClick);
@@ -1629,23 +1719,23 @@ const APPController = (function (UICtrl, APICtrl) {
 
     }
 
-    function checkChooseQAnswer(correct) {
+    function checkChooseQAnswer(correct, correctAnswers = null) {
         if (questionSkipped) {
             document.getElementById("popup-title").textContent = `Question skipped`;
             document.getElementById("fire").textContent = `ℹ️`;
-            chooseQAnswerPopUp(score_board);
+            chooseQAnswerPopUp(correctAnswers);
         }
         else if (correct) {
             console.log("Correct")
             document.getElementById("popup-title").textContent = `Correct!!`;
             document.getElementById("fire").textContent = `✅`
-            chooseQAnswerPopUp(score_board);
+            chooseQAnswerPopUp(correctAnswers);
         }
         else {
             console.log("Incorrect");
             document.getElementById("popup-title").textContent = `Incorrect!!`;
             document.getElementById("fire").textContent = `❌`
-            chooseQAnswerPopUp(score_board);
+            chooseQAnswerPopUp(correctAnswers);
         }
     }
 
@@ -1820,6 +1910,29 @@ const APPController = (function (UICtrl, APICtrl) {
 
     }
 
+    function startFullTestPopularityQuestion(items, prompt, requiredItemId) {
+        const matchingGame = document.getElementsByClassName("matching-game")[0];
+        document.getElementsByClassName("qbox")[0].classList.remove("active");
+        const started = PopularityMatchingQuestion.start(items, (correct, correctAnswers) => {
+            matchingGame.classList.remove("active");
+            score_board[correct ? 0 : 1]++;
+            document.getElementById("popup-title").textContent = correct
+                ? `Correct! Good job!`
+                : `Incorrect... Get the next one!`;
+            document.getElementById("fire").textContent = correct ? `✅` : `❌`;
+            fullTestPopup(correctAnswers);
+        }, requiredItemId);
+
+        if (!started) {
+            questionSkipped = true;
+            fullTestPopup();
+            return;
+        }
+
+        UICtrl.setQuestionText(prompt);
+        matchingGame.classList.add("active");
+    }
+
     async function fullTestQuestion(sel_question) {
         questionSkipped = false;
         let questionAvailable = true;
@@ -1827,15 +1940,25 @@ const APPController = (function (UICtrl, APICtrl) {
         var mc_spots = Math.floor(Math.random() * 4);
         var correctAnswer = false;
 
+        if (sel_question === 0 || sel_question === 6 || sel_question === 10) {
+            UICtrl.removeAlbumImage();
+            const isArtistQuestion = sel_question === 0;
+            startFullTestPopularityQuestion(
+                isArtistQuestion ? getArtistPopularityItems() : getSongPopularityItems(),
+                isArtistQuestion
+                    ? 'Match each artist to its Spotify popularity score'
+                    : 'Match each song to its Spotify popularity score',
+                isArtistQuestion ? artist.id : undefined
+            );
+            return;
+        }
+
         if (albums.length != 0) {
             randomAlbumIndex = Math.floor(Math.random() * albums.length);
             UICtrl.createAlbumImage(UICtrl.getImageUrl(albums[randomAlbumIndex].images), albums[randomAlbumIndex].name);
         }
 
-        if (sel_question == 0) {
-            questionAvailable = UICtrl.popularity(artist, mc_spots) !== false;
-        }
-        else if (sel_question == 1) {
+        if (sel_question == 1) {
             questionAvailable = UICtrl.followers(artist, mc_spots) !== false;
         }
         else if (sel_question == 2) {
@@ -1850,9 +1973,6 @@ const APPController = (function (UICtrl, APICtrl) {
         else if (sel_question == 5) {
             questionAvailable = UICtrl.trackLength(artistTopTen, mc_spots) !== false;
         }
-        else if (sel_question == 6) {
-            questionAvailable = UICtrl.trackPopularity(artistTopTen, mc_spots) !== false;
-        }
         else if (sel_question == 7) {
             questionAvailable = UICtrl.albumCount(albums, artist, artistAlbums, mc_spots) !== false;
         }
@@ -1861,9 +1981,6 @@ const APPController = (function (UICtrl, APICtrl) {
         }
         else if (sel_question == 9) {
             questionAvailable = UICtrl.albumRelease(albums, mc_spots, randomAlbumIndex) !== false;
-        }
-        else if (sel_question == 10) {
-            questionAvailable = UICtrl.trackPopularity(artistTopTen, mc_spots) !== false;
         }
         else if (sel_question == 11) {
             questionAvailable = UICtrl.trackRelease(artistTopTen, mc_spots) !== false;
@@ -2004,7 +2121,7 @@ const APPController = (function (UICtrl, APICtrl) {
             }
 
         }  
-        fullTestPopup(score_board);
+        fullTestPopup();
 
 
     }
@@ -2053,8 +2170,9 @@ const APPController = (function (UICtrl, APICtrl) {
 
     }
 
-    function fullTestPopup() {
+    function fullTestPopup(correctAnswers = null) {
         document.getElementsByClassName("popup-center")[0].classList.add("active");
+        setMatchingAnswerKey(correctAnswers);
 
         var totalQ = score_board[0] + score_board[1];
 
@@ -2110,10 +2228,11 @@ const APPController = (function (UICtrl, APICtrl) {
 
     }
 
-    function chooseQAnswerPopUp() {
+    function chooseQAnswerPopUp(correctAnswers = null) {
         document.getElementsByClassName("popup-center")[0].classList.add("active");
 
         UIController.appendScore(` Score ${score_board[0]} / ${score_board[1] + score_board[0]}!`);
+        setMatchingAnswerKey(correctAnswers);
 
         dismiss_btn.addEventListener("click", dismissPopup);
    
@@ -2134,6 +2253,29 @@ const APPController = (function (UICtrl, APICtrl) {
         }
         console.log(score_board);
 
+    }
+
+    function setMatchingAnswerKey(correctAnswers) {
+        const answerKey = document.getElementById("matching-answer-key");
+        answerKey.replaceChildren();
+        answerKey.classList.toggle("active", Array.isArray(correctAnswers) && correctAnswers.length > 0);
+        if (!Array.isArray(correctAnswers)) {
+            return;
+        }
+
+        const answersByScore = new Map();
+        correctAnswers.forEach(({ popularity, label }) => {
+            if (!answersByScore.has(popularity)) {
+                answersByScore.set(popularity, []);
+            }
+            answersByScore.get(popularity).push(label);
+        });
+        answersByScore.forEach((labels, popularity) => {
+            const answer = document.createElement("li");
+            const scoreLabel = labels.length > 1 ? `${popularity} (x${labels.length})` : popularity;
+            answer.textContent = `${scoreLabel} - ${labels.join(', ')}`;
+            answerKey.append(answer);
+        });
     }
 
     hsbtn.addEventListener('click', event => {
