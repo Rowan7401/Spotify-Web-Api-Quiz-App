@@ -121,16 +121,16 @@
             </div>
 
             <section class="matching-game" aria-labelledby="matching-title">
-                <h3 id="matching-title">Popularity ranking</h3>
-                <p>Match each song or artist to its rank. Rank 1 is most popular.</p>
+                <h3 id="matching-title">Popularity matching</h3>
+                <p>Match each song or artist to its Spotify popularity score.</p>
                 <div class="matching-columns">
                     <div>
                         <h4>Options</h4>
                         <div id="matching-items" class="matching-list"></div>
                     </div>
                     <div>
-                        <h4>Popularity rank</h4>
-                        <div id="matching-ranks" class="matching-list"></div>
+                        <h4>Popularity score</h4>
+                        <div id="matching-scores" class="matching-list"></div>
                     </div>
                 </div>
                 <p id="matching-status" role="status" aria-live="polite"></p>
@@ -167,6 +167,7 @@
                 <div class="description">
                     <header id="score">
                     </header>
+                    <ul id="matching-answer-key" class="matching-answer-key"></ul>
                 </div>
                 <div class="dismiss-btn">
                     <button id="dismiss-popup-btn">

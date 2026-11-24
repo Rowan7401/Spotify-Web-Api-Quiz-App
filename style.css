@@ -365,6 +365,25 @@ label {
   margin: 0;
 }
 
+.matching-answer-key {
+  display: none;
+  box-sizing: border-box;
+  width: min(100%, 24rem);
+  max-height: 6rem;
+  overflow-y: auto;
+  margin: 0.4rem auto 0;
+  padding: 0;
+  color: #fff;
+  font-size: 0.9rem;
+  list-style: none;
+  text-align: left;
+}
+
+.matching-answer-key.active {
+  display: grid;
+  gap: 0.2rem;
+}
+
 .popup-center .dismiss-btn button {
   padding: 0.2rem 0.5rem;
   width: 10rem;
@@ -809,8 +828,12 @@ label {
 
 .matching-list button,
 .matching-submit {
+  position: relative;
+  z-index: 3;
   min-height: 2.75rem;
   padding: 0.6rem 0.75rem;
+  overflow-wrap: anywhere;
+  text-align: left;
   border: 1px solid #1db954;
   border-radius: 0.6rem;
   background: #232323;
@@ -820,6 +843,7 @@ label {
 }
 
 .matching-list button.selected,
+.matching-list button.assigned,
 .matching-list button:hover,
 .matching-submit:not(:disabled):hover {
   background: #1db954;
@@ -838,8 +862,15 @@ label {
 }
 
 #matching-status {
-  min-height: 1.5em;
-  color: #d9d9d9;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 @media (max-width: 480px) {
